@@ -1,0 +1,31 @@
+<div class="min-h-screen flex items-center justify-center p-4">
+    <app-card class="w-full max-w-md sm:max-w-lg md:max-w-xl">
+        <form (ngSubmit)="onSubmit()">
+            <div class="flex flex-col items-center">
+                <a routerLink="/">
+                    <img src="logos/logo.svg" width="78" height="59" alt="Logo NexoCPM">
+                </a>
+                <h1 class="text-4xl text-txt-primary font-bold mb-4 mt-4">Inicio de Sesión</h1>
+                <p>Bienvenido a <a routerLink="/" class="text-primary font-semibold">NexoCPM</a>, ingresa tus
+                    credenciales
+                    para
+                    iniciar sesión</p>
+            </div>
+            <div class="mt-10 flex flex-col gap-2">
+                <app-main-input label="Correo electrónico" placeholder="Ingresa tu correo electrónico" type="email"
+                    [control]="emailControl" />
+                <app-main-input label="Contraseña" placeholder="Ingresa tu contraseña" type="password"
+                    [control]="passwordControl" />
+            </div>
+            <div class="flex justify-center mt-8">
+                <app-primary-button label="Iniciar sesión" type="submit" />
+            </div>
+            <div class="mt-10">
+                <p class="text-center mt-4 text-sm">
+                    ¿No tienes una cuenta? <a routerLink="/auth/register" class="text-primary font-semibold">Regístrate
+                        aquí</a>
+                </p>
+            </div>
+        </form>
+    </app-card>
+</div>

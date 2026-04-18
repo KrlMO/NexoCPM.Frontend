@@ -1,0 +1,41 @@
+<div class="min-h-screen flex items-center justify-center p-4">
+    <app-card class="w-full md:max-w-4xl">
+        <form (ngSubmit)="onSubmit()">
+            <div class="flex flex-col items-center">
+                <a routerLink="/">
+                    <img src="logos/logo.svg" width="78" height="59" alt="Logo NexoCPM">
+                </a>
+                <h1 class="text-4xl text-txt-primary font-bold mb-4 mt-4">Registro</h1>
+                <p>Bienvenido a <a routerLink="/" class="text-primary font-semibold">NexoCPM</a>, ingresa tus datos
+                    personales
+                    para crear una cuenta</p>
+            </div>
+            <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full items-stretch">
+                <app-main-input class="w-full" label="Nombres" placeholder="Ingresa tu nombre completo" type="text"
+                    [control]="firstNameControl" />
+                <app-main-input class="w-full" label="Apellidos" placeholder="Ingresa tus apellidos" type="text"
+                    [control]="lastNameControl" />
+                <app-main-input class="w-full" label="Nombre de usuario" placeholder="Ingresa tu nombre de usuario"
+                    type="text" [control]="userNameControl" />
+                <app-main-input class="w-full" label="Correo electrónico" placeholder="Ingresa tu correo electrónico"
+                    type="email" [control]="emailControl" />
+                <app-main-input class="w-full" label="Contraseña" placeholder="Ingresa tu contraseña" type="password"
+                    [control]="passwordControl" />
+                <app-main-input class="w-full" label="Verificar contraseña"
+                    placeholder="Ingresa tu contraseña nuevamente" type="password" [control]="confirmPasswordControl" />
+            </div>
+            @if (passwordMismatch) {
+            <p class="text-red-500 text-sm mt-2 text-center">Las contraseñas no coinciden</p>
+            }
+            <div class="flex justify-center mt-12">
+                <app-primary-button label="Regístrate" type="submit" />
+            </div>
+            <div class="mt-10">
+                <p class="text-center mt-4 text-sm">
+                    ¿Ya tienes una cuenta? <a routerLink="/auth/login" class="text-primary font-semibold">Inicia sesión
+                        aquí</a>
+                </p>
+            </div>
+        </form>
+    </app-card>
+</div>
