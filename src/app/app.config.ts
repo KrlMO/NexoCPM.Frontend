@@ -3,12 +3,17 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { API_URL } from './core/config/api.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient()
+    provideHttpClient(),
+    {
+      provide: API_URL,
+      useValue: 'http://localhost:8080'
+    }
   ]
 };

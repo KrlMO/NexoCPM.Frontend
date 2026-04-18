@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Card } from "../../../../shared/ui/card/card";
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MainInput } from '../../../../shared/ui/main-input/main-input';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
+import { Auth } from '../../../../core/services/auth/auth';
+import { RegisterRequest, RegisterResponse } from '../../../../core/models/auth.model';
+import { EncodingUtil } from '../../../../shared/utils/encoding.util';
 
 export const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const password = group.get('password')?.value;
@@ -23,15 +26,17 @@ export const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Val
   styleUrl: './register.css',
 })
 export class Register {
+  private authService = inject(Auth);
+  private router = inject(Router);
 
   registerForm = new FormGroup(
     {
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
-      userName: new FormControl(''),
-      email: new FormControl(''),
-      password: new FormControl(''),
-      confirmPassword: new FormControl('')
+      firstName: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
+      userName: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      confirmPassword: new FormControl('', [Validators.required])
     },
     { validators: passwordMatchValidator });
 
@@ -46,8 +51,24 @@ export class Register {
     return this.registerForm.hasError('passwordMismatch') && this.confirmPasswordControl.touched;
   }
 
-  onSubmit() {
+  onSubmit(event: Event) {
+    event.preventDefault();
+
     if (this.registerForm.invalid) return;
-    console.log(this.registerForm.value);
+
+    const data = this.registerForm.value as RegisterRequest;
+
+    this.authService.register(data).subscribe({
+      next: (res: RegisterResponse) => {
+
+        const encodedEmail = EncodingUtil.encodeEmail(res.email);
+
+        this.router.navigate(['/auth/verify-email'], {
+          queryParams: {
+            email: encodedEmail
+          }
+        });
+      }
+    });
   }
 }

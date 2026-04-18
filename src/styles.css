@@ -8,7 +8,9 @@
     --color-txt-primary: #0F172A;
     --color-primary: #0054A2;
     --color-primary-dark: #015182;
+    --color-secondary: #2597C8;
     --color-border: #E2E8F0;
+    --color-danger: #DC2626;
 
     --font-sans: 'Inter', sans-serif;
 }

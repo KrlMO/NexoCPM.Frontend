@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, tap } from 'rxjs';
-import { AuthResponse } from '../models/auth.model';
+import { AuthResponse, RegisterRequest, RegisterResponse } from '../../models/auth.model';
+import { API_URL } from '../../config/api.config';
+
 
 @Injectable({
   providedIn: 'root',
@@ -9,11 +11,11 @@ import { AuthResponse } from '../models/auth.model';
 export class Auth {
   private token: string | null = null;
   private user$ = new BehaviorSubject<any>(null);
-
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
+  private apiUrl = inject(API_URL) + '/v1/auth';
 
   login(credentials: { email: string; password: string }) {
-    return this.http.post<AuthResponse>('/api/auth/login', credentials).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(res => {
         this.token = res.accessToken;
         this.user$.next(res.user);
@@ -33,6 +35,10 @@ export class Auth {
     this.token = null;
     this.user$.next(null);
     return this.http.post('/api/auth/logout', {});
+  }
+
+  register(data: RegisterRequest) {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, data);
   }
 
   refreshToken() {
