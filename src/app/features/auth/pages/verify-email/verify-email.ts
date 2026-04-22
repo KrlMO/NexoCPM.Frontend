@@ -2,17 +2,18 @@ import { Component, inject } from '@angular/core';
 import { Card } from '../../../../shared/ui/card/card';
 import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/secondary-button';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthFacade } from '../../../../core/services/auth/auth-facade';
 import { EncodingUtil } from '../../../../shared/utils/encoding.util';
-import { VerifyEmailVerificationResponse } from '../../../../core/models/auth.model';
+import { VerifyEmailStatusResponse } from '../../../../core/models/auth.model';
 
 @Component({
   selector: 'app-verify-email',
   imports: [
     Card,
     SecondaryButton,
-    PrimaryButton
+    PrimaryButton,
+    RouterLink
   ],
   templateUrl: './verify-email.html',
   styleUrl: './verify-email.css',
@@ -50,7 +51,7 @@ export class VerifyEmail {
 
   loadStatus() {
     this.authFacadeService.getVerificationStatus(this.email)
-      .subscribe((res: VerifyEmailVerificationResponse) => {
+      .subscribe((res: VerifyEmailStatusResponse) => {
         if (res.alreadyVerified) {
           this.router.navigate(['/auth/login'], {
             queryParams: { alreadyVerified: true }

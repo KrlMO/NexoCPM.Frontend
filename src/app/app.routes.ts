@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthLayout } from './layout/auth-layout/auth-layout';
+import { PublicLayout } from './layout/public-layout/public-layout';
 
 export const routes: Routes = [
     {
@@ -17,6 +18,16 @@ export const routes: Routes = [
             {
                 path: 'verify-email',
                 loadComponent: () => import('./features/auth/pages/verify-email/verify-email').then(m => m.VerifyEmail)
+            }
+        ]
+    },
+    {
+        path: '',
+        component: PublicLayout,
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./features/public/pages/home/home').then(m => m.Home)
             }
         ]
     }

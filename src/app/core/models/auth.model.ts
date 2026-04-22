@@ -23,7 +23,7 @@ export interface RegisterResponse {
     email: string;
 }
 
-export interface VerifyEmailVerificationResponse {
+export interface VerifyEmailStatusResponse {
     nextResendIn: number;
     alreadyVerified: boolean;
     emailDoesNotExist: boolean;

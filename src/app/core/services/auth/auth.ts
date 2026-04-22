@@ -23,6 +23,8 @@ export class Auth {
     );
   }
 
+  isLoggedIn$ = this.user$.asObservable();
+
   getToken() {
     return this.token;
   }
@@ -42,7 +44,7 @@ export class Auth {
   }
 
   refreshToken() {
-    return this.http.post<any>('/api/auth/refresh', {}).pipe(
+    return this.http.post<any>(`${this.apiUrl}/refresh`, {}).pipe(
       tap(res => {
         this.token = res.accessToken;
       })

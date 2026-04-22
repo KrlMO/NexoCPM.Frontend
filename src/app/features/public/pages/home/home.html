@@ -1,0 +1,158 @@
+<div class="min-h-screen flex flex-col items-center px-4 py-12 gap-12">
+
+    <!-- HERO CARD -->
+    <div class="relative w-full max-w-7xl group">
+        <div class="absolute inset-0 translate-y-4 rounded-2xl bg-gradient-to-br from-primary to-primary-dark"></div>
+
+        <div class="relative bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center
+             transition-all duration-300 group-hover:-translate-y-3">
+            <h1 class="text-2xl md:text-4xl font-bold text-gray-800 leading-tight">
+                Prepárate para el ascenso docente con seguimiento inteligente
+            </h1>
+
+            <p class="mt-4 text-gray-600 text-sm md:text-base">
+                Organiza tus temarios, estudia por unidades, resuelve simulacros y recibe
+                retroalimentación personalizada.
+            </p>
+
+            <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                <app-secondary-button label="¡Regístrate ahora!" (click)="goRegister()"/>
+                <app-secondary-button label="¡Iniciar sesión!" (click)="goLogin()" />
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- CARD 1 -->
+        <div class="relative group h-full">
+
+            <div class="absolute inset-0 translate-y-3 rounded-xl
+      bg-[rgba(0,181,109,0.3)]
+      opacity-0 transition-all duration-300
+      group-hover:opacity-100">
+            </div>
+
+            <div class="relative bg-white rounded-xl shadow-md p-6 text-center
+      h-full flex flex-col justify-between
+      transition-all duration-300
+      group-hover:-translate-y-2 group-hover:shadow-xl">
+
+                <div>
+                    <img src="icons/box.svg" class="mx-auto mb-4 w-12 h-12">
+                    <h2 class="text-lg font-semibold text-txt-primary">Temas organizados</h2>
+                    <p class="text-sm text-gray-600 mt-2">
+                        Especialidades, subpruebas y unidades estructuradas.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="relative group h-full">
+
+            <div class="absolute inset-0 translate-y-3 rounded-xl
+      bg-[rgba(81,0,180,0.8)]
+      opacity-0 transition-all duration-300
+      group-hover:opacity-100">
+            </div>
+
+            <div class="relative bg-white rounded-xl shadow-md p-6 text-center
+      h-full flex flex-col justify-between
+      transition-all duration-300
+      group-hover:-translate-y-2 group-hover:shadow-xl">
+
+                <div>
+                    <img src="icons/progress-bar.svg" class="mx-auto mb-4 w-12 h-12">
+                    <h2 class="text-lg font-semibold text-txt-primary">Seguimiento de progreso</h2>
+                    <p class="text-sm text-gray-600 mt-2">
+                        Visualiza tu avance, fortalezas y pendientes.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="relative group h-full">
+
+            <div class="absolute inset-0 translate-y-3 rounded-xl
+      bg-[rgba(149,194,0,0.3)]
+      opacity-0 transition-all duration-300
+      group-hover:opacity-100">
+            </div>
+
+            <div class="relative bg-white rounded-xl shadow-md p-6 text-center
+      h-full flex flex-col justify-between
+      transition-all duration-300
+      group-hover:-translate-y-2 group-hover:shadow-xl">
+
+                <div>
+                    <img src="icons/exams.svg" class="mx-auto mb-4 w-12 h-12">
+                    <h2 class="text-lg font-semibold text-txt-primary">Simulacros inteligentes</h2>
+                    <p class="text-sm text-gray-600 mt-2">
+                        Evalúate con preguntas de pruebas pasadas de la CPM.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <app-card class="w-full max-w-5xl p-8 md:p-12 group">
+        
+        <!-- TÍTULO -->
+        <h2 class="text-2xl md:text-3xl font-bold text-center text-txt-primary">
+            ¿Cómo funciona?
+        </h2>
+
+        <!-- PASOS -->
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+
+            <!-- PASO 1 -->
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary text-white font-bold">
+                    1
+                </div>
+                <h3 class="font-semibold text-txt-primary">Elige tu temario</h3>
+                <p class="text-sm text-gray-600">
+                    Selecciona la especialidad y estructura de estudio que necesitas.
+                </p>
+            </div>
+
+            <!-- PASO 2 -->
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary text-white font-bold">
+                    2
+                </div>
+                <h3 class="font-semibold text-txt-primary">Estudia por unidades</h3>
+                <p class="text-sm text-gray-600">
+                    Avanza paso a paso con contenido organizado y progresivo.
+                </p>
+            </div>
+
+            <!-- PASO 3 -->
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary text-white font-bold">
+                    3
+                </div>
+                <h3 class="font-semibold text-txt-primary">Mide tu avance</h3>
+                <p class="text-sm text-gray-600">
+                    Evalúate con simulacros y mejora continuamente.
+                </p>
+            </div>
+
+        </div>
+    </app-card>
+    <div>
+        <h2 class="text-2xl md:text-3xl font-bold text-center text-txt-primary">
+            ¿Listo para empezar tu preparación?
+        </h2>
+        <div class="mt-8 flex justify-center gap-4">
+            <app-secondary-button label="¡Regístrate ahora!" (click)="goRegister()"/>
+            <app-secondary-button label="¡Iniciar sesión!" (click)="goLogin()"/>
+        </div>
+    </div>
+</div>
