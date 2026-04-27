@@ -5,18 +5,22 @@
                 <img src="logos/logo.svg" width="78" height="59" alt="Logo NexoCPM">
             </a>
             <h1 class="text-4xl text-txt-primary font-bold mb-4 mt-4">Verificar correo electrónico</h1>
-            <p>
+            <p class="text-center">
                 Felicidades, ya creaste tu cuenta en NexoCPM. Se envió un correo electrónico a
                 <span class="font-semibold">
                     {{ maskedEmail }}
                 </span>
                 . Revisa tu bandeja de entrada y verifica tu correo electrónico. En caso de no ver ningún correo
                 electrónico revisa tu bandeja de spam.
-                Tambien puedes reenviar el correo electrónico en: 90 segundos
             </p>
         </div>
         <div class="mt-12 grid grid-cols-1 gap-4 justify-items-center">
+            @if (isResendDisabled) {
+            <app-primary-button label="Reenviar en {{ resendIn }}s" type="button" [disabled]="true" />
+            }
+            @else {
             <app-primary-button label="Reenviar correo electrónico" (click)="resendEmail()" />
+            }
             <app-secondary-button label="Iniciar sesión" (click)="navigateToLogin()" />
             <app-secondary-button label="Volver al inicio" (click)="navigateToHome()" />
         </div>

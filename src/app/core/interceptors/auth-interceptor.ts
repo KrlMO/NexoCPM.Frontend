@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
-import { Auth } from '../services/auth/auth';
+import { Auth } from '../../features/auth/services/auth.service';
 
 let isRefreshing = false;
 
@@ -14,15 +14,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authReq = token
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req;
+  const ignoredUrls = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/verify-email/status'];
 
   return next(authReq).pipe(
     catchError(err => {
-      if (err.status === 401 && !req.url.includes('/refresh') && !isRefreshing) {
+      if (
+        err.status === 401 &&
+        !ignoredUrls.some(url => req.url.includes(url)) &&
+        !isRefreshing
+      ) {
         isRefreshing = true;
 
         return auth.refreshToken().pipe(
           switchMap(res => {
-            const newToken = (res as { accessToken: string }).accessToken;
+            const newToken = res.data?.accessToken;
             isRefreshing = false;
             const retryReq = req.clone({
               setHeaders: { Authorization: `Bearer ${newToken}` },
@@ -31,9 +36,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           }),
           catchError(refreshErr => {
             isRefreshing = false;
-            auth.logout().subscribe(() => {
-              router.navigate(['/auth/login']);
-            });
+            auth.logout();
             return throwError(() => refreshErr);
           })
         );

@@ -3,9 +3,10 @@ import { Card } from '../../../../shared/ui/card/card';
 import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/secondary-button';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthFacade } from '../../../../core/services/auth/auth-facade';
+import { AuthFacade } from '../../state/auth-facade';
 import { EncodingUtil } from '../../../../shared/utils/encoding.util';
-import { VerifyEmailStatusResponse } from '../../../../core/models/auth.model';
+import { VerifyEmailVerificationResponse } from '../../models/auth.model';
+import { ApiResponse } from '../../../../core/models/api-response.model';
 
 @Component({
   selector: 'app-verify-email',
@@ -22,6 +23,8 @@ export class VerifyEmail {
   email: string = '';
   maskedEmail: string = '';
   resendIn: number = 0;
+  isResendDisabled = true;
+  remainingSeconds: number = 0;
 
   private router = inject(Router);
 
@@ -51,20 +54,22 @@ export class VerifyEmail {
 
   loadStatus() {
     this.authFacadeService.getVerificationStatus(this.email)
-      .subscribe((res: VerifyEmailStatusResponse) => {
-        if (res.alreadyVerified) {
+      .subscribe((res: ApiResponse<VerifyEmailVerificationResponse>) => {
+        if (res.data?.emailVerified) {
           this.router.navigate(['/auth/login'], {
             queryParams: { alreadyVerified: true }
           });
           return;
         }
-        if (res.emailDoesNotExist) {
+        if (res.data?.emailExists === false) {
           this.router.navigate(['/auth/login'], {
             queryParams: { emailExists: false }
           });
           return;
         }
-        this.resendIn = res.nextResendIn;
+        this.isResendDisabled = res.data?.canResend === false;
+
+        this.resendIn = res.data?.timeToResendSeconds ?? 0;
       });
   }
 

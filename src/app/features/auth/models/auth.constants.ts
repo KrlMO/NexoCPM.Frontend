@@ -1,0 +1,1 @@
+export const MAX_RESEND_WAIT_SECONDS = 120;

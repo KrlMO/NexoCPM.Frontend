@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, tap } from 'rxjs';
-import { API_URL } from '../../config/api.config';
-import { VerifyEmailStatusResponse } from '../../models/auth.model';
+import { API_URL } from '../../../core/config/api.config';
+import { ApiResponse } from '../../../core/models/api-response.model';
+import { VerifyEmailVerificationResponse } from '../models/auth-responses.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,7 @@ export class AuthFacade {
   }
 
   getVerificationStatus(email: string) {
-    return this.http.get<VerifyEmailStatusResponse>(`${this.apiUrl}/verify/status`, {
+    return this.http.get<ApiResponse<VerifyEmailVerificationResponse>>(`${this.apiUrl}/verify-email/status`, {
       params: { email }
     });
   }

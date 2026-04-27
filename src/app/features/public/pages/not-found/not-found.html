@@ -1,0 +1,33 @@
+<div class="min-h-screen flex flex-col items-center justify-center px-4 py-12 gap-8">
+    
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="relative w-full max-w-lg group">
+        <div class="absolute inset-0 translate-y-4 rounded-2xl bg-gradient-to-br from-primary to-primary-dark"></div>
+
+        <div class="relative bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center
+             transition-all duration-300 group-hover:-translate-y-3">
+            
+            <!-- ICONO 404 -->
+            <div class="mb-6">
+                <span class="text-8xl font-bold text-primary">404</span>
+            </div>
+
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 leading-tight">
+                Página no encontrada
+            </h1>
+
+            <p class="mt-4 text-gray-600 text-sm md:text-base">
+                Lo sentimos, la página que buscas no existe o ha sido movida.
+            </p>
+
+            <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                <app-secondary-button label="Volver al inicio" (click)="goHome()"/>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENSAJE ADICIONAL -->
+    <p class="text-gray-500 text-sm text-center max-w-md">
+        Si crees que esto es un error, por favor contacta con soporte.
+    </p>
+</div>

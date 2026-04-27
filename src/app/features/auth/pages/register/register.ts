@@ -4,9 +4,13 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn,
 import { MainInput } from '../../../../shared/ui/main-input/main-input';
 import { Router, RouterLink } from '@angular/router';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
-import { Auth } from '../../../../core/services/auth/auth';
-import { RegisterRequest, RegisterResponse } from '../../../../core/models/auth.model';
+import { Auth } from '../../services/auth.service';
 import { EncodingUtil } from '../../../../shared/utils/encoding.util';
+import { ApiResponse } from '../../../../core/models/api-response.model';
+import { ToastService } from '../../../../shared/ui/toast/toast.service';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RegisterRequest } from '../../models/auth-requests.model';
+import { RegisterResponse } from '../../models/auth-responses.model';
 
 export const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const password = group.get('password')?.value;
@@ -20,7 +24,8 @@ export const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Val
     Card,
     MainInput,
     RouterLink,
-    PrimaryButton
+    PrimaryButton,
+    ReactiveFormsModule
   ],
   templateUrl: './register.html',
   styleUrl: './register.css',
@@ -28,12 +33,13 @@ export const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Val
 export class Register {
   private authService = inject(Auth);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   registerForm = new FormGroup(
     {
       firstName: new FormControl('', [Validators.required]),
       lastName: new FormControl('', [Validators.required]),
-      userName: new FormControl('', [Validators.required]),
+      userName: new FormControl('', [Validators.required, Validators.minLength(3)]),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl('', [Validators.required])
@@ -51,24 +57,38 @@ export class Register {
     return this.registerForm.hasError('passwordMismatch') && this.confirmPasswordControl.touched;
   }
 
+  isLoading = false;
+
   onSubmit(event: Event) {
     event.preventDefault();
 
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.invalid) {
+      this.markAllAsTouched();
+      return;
+    }
 
     const data = this.registerForm.value as RegisterRequest;
 
+    this.isLoading = true;
     this.authService.register(data).subscribe({
-      next: (res: RegisterResponse) => {
-
-        const encodedEmail = EncodingUtil.encodeEmail(res.email);
-
-        this.router.navigate(['/auth/verify-email'], {
-          queryParams: {
-            email: encodedEmail
-          }
-        });
+      next: (res: ApiResponse<RegisterResponse>) => {
+        this.isLoading = false;
+        if (res.success) {
+          const encodedEmail = EncodingUtil.encodeEmail(res.data?.email || '');
+          this.router.navigate(['/auth/verify-email'], {
+            queryParams: { email: encodedEmail }
+          });
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const errorMessage = err.error?.message || err.error?.Message || 'Error al registrar. Por favor intenta de nuevo.';
+        this.toastService.error(errorMessage);
       }
     });
+  }
+
+  private markAllAsTouched() {
+    this.registerForm.markAllAsTouched();
   }
 }

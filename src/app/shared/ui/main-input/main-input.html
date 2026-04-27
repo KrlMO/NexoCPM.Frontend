@@ -16,8 +16,15 @@
                 placeholder:text-muted-foreground
                 text-sm md:text-base
                 focus-visible:outline-none
-                focus-visible:ring-2 focus-visible:ring-blue-500
+                focus:ring-2 focus:ring-danger
                 transition-all
-            " />
+            " [class.border-danger]="control.invalid && control.touched" />
     </div>
+    @if (control.invalid && control.touched) {
+    <p class="text-danger text-sm">
+        @if (control.hasError('required')) { Este campo es obligatorio. }
+        @else if (control.hasError('email')) { Formato de correo inválido. }
+        @else if (control.hasError('minlength')) { Mínimo {{ control.getError('minlength')?.requiredLength }} caracteres. }
+    </p>
+    }
 </div>

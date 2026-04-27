@@ -28,7 +28,26 @@ export const routes: Routes = [
             {
                 path: '',
                 loadComponent: () => import('./features/public/pages/home/home').then(m => m.Home)
+            },
+            {
+                path: '404',
+                loadComponent: () => import('./features/public/pages/not-found/not-found').then(m => m.NotFound)
             }
         ]
+    },
+    {
+        path: 'app',
+        component: PublicLayout,
+        children: [
+            {
+                path: 'home',
+                loadComponent: () => import('./features/app/pages/home/home').then(m => m.Home)
+            }
+        ]
+    },
+    {
+        path: '**',
+        redirectTo: '404',
+        pathMatch: 'full'
     }
 ];
