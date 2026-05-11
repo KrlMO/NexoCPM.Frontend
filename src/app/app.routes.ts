@@ -42,6 +42,22 @@ export const routes: Routes = [
             {
                 path: 'home',
                 loadComponent: () => import('./features/app/pages/home/home').then(m => m.Home)
+            },
+            {
+                path: 'syllabi',
+                loadComponent: () => import('./features/curriculum/pages/syllabi/syllabi').then(m => m.Syllabi)
+            },
+            {
+                path:'me',
+                loadComponent: () => import('./features/users/pages/profile/profile').then(m => m.Profile)
+            },
+            {
+                path: 'progress',
+                loadComponent: () => import('./features/dashboard/pages/preparation-dashboard/preparation-dashboard').then(m => m.PreparationDashboard)
+            },
+            {
+                path: 'my-syllabi',
+                loadComponent: () => import('./features/curriculum/pages/my-syllabi/my-syllabi').then(m => m.MySyllabi)
             }
         ]
     },

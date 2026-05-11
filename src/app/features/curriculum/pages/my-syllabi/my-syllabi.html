@@ -1,0 +1,91 @@
+<div class="bg-background min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+        <h1 class="text-2xl md:text-3xl font-bold text-txt-primary mb-8">
+            Mis temarios
+        </h1>
+
+        <app-card>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-txt-primary">Buscar</label>
+                    <input type="text" placeholder="Buscar por nombre..."
+                        class="w-full h-10 px-4 rounded-lg border border-border bg-background text-txt-primary text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-txt-primary">Ordenar por</label>
+                    <select
+                        class="w-full h-10 px-3 rounded-lg border border-border bg-background text-txt-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        [(ngModel)]="sortOrder" (change)="onSortChange()">
+                        <option value="desc">Más reciente</option>
+                        <option value="asc">Más antiguo</option>
+                    </select>
+                </div>
+            </div>
+        </app-card>
+
+        <div class="mt-8">
+            @if (isLoading) {
+            <div class="text-center py-20">
+                <p class="text-txt-secondary">Cargando...</p>
+            </div>
+            } @else if (mySyllabi.length > 0) {
+            <div class="flex items-center justify-between mb-4">
+                <p class="text-sm text-txt-secondary">
+                    {{ totalItems }} temario{{ totalItems !== 1 ? 's' : '' }}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (syllabus of mySyllabi; track syllabus.id) {
+                <app-card [fullHeight]="true">
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-lg font-bold text-txt-primary mb-2 leading-snug">{{ syllabus.name }}</h3>
+
+                        <div class="space-y-2 mb-4 text-sm">
+                            <div>
+                                <span class="text-txt-secondary">Progreso:</span>
+                                <span class="font-semibold text-txt-primary ml-1">{{ syllabus.completedPercentage }}%</span>
+                            </div>
+                            @if (syllabus.lastAccess) {
+                            <div>
+                                <span class="text-txt-secondary">Último acceso:</span>
+                                <span class="text-txt-primary ml-1">{{ syllabus.lastAccess | date:'short' }}</span>
+                            </div>
+                            }
+                            @if (syllabus.lastUnitName) {
+                            <div>
+                                <span class="text-txt-secondary">Unidad actual:</span>
+                                <span class="text-txt-primary ml-1">{{ syllabus.lastUnitName }}</span>
+                            </div>
+                            }
+                        </div>
+
+                        <div class="mt-auto">
+                            <app-progress-bar [percentage]="syllabus.completedPercentage" color="#5100B4" />
+                        </div>
+
+                        <div class="mt-4 flex justify-center">
+                            <app-secondary-button label="Continuar" variant="primary" (click)="continueSyllabus(syllabus)" />
+                        </div>
+                    </div>
+                </app-card>
+                }
+            </div>
+
+            <div class="mt-8">
+                <app-pagination [currentPage]="pagination.page" [totalPages]="totalPages"
+                    (pageChange)="onPageChange($event)" />
+            </div>
+            } @else {
+            <div class="text-center py-20 bg-surface border border-border rounded-xl">
+                <p class="text-lg font-semibold text-txt-primary mb-1">No tienes temarios en curso</p>
+                <p class="text-txt-secondary text-sm">Explora y comienza un nuevo temario</p>
+                <div class="mt-6">
+                    <app-primary-button label="Explorar temarios" variant="primary" (click)="goToSyllabi()" />
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

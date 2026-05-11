@@ -5,8 +5,8 @@ import { PrimaryButton } from '../../../../shared/ui/button/primary-button/prima
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthFacade } from '../../state/auth-facade';
 import { EncodingUtil } from '../../../../shared/utils/encoding.util';
-import { VerifyEmailVerificationResponse } from '../../models/auth.model';
 import { ApiResponse } from '../../../../core/models/api-response.model';
+import { VerifyEmailVerificationResponse } from '../../models/auth-responses.model';
 
 @Component({
   selector: 'app-verify-email',

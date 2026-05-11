@@ -1,0 +1,117 @@
+<div class="bg-background min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+        <!-- Header -->
+        <h1 class="text-2xl md:text-3xl font-bold text-txt-primary mb-8">
+            Encuentra el temario que necesitas
+        </h1>
+
+        <!-- Filters -->
+        <app-card>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-txt-primary">Buscar</label>
+                    <input type="text" placeholder="Nombre del temario..."
+                        class="w-full h-10 px-4 rounded-lg border border-border bg-background text-txt-primary text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" />
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-txt-primary">Modalidad</label>
+                    <select
+                        class="w-full h-10 px-3 rounded-lg border border-border bg-background text-txt-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        [(ngModel)]="selectedModalitySlug" (change)="onFilterChange()">
+                        <option value="">Todas las modalidades</option>
+                        @for (mod of modalities; track mod.id) {
+                        <option [value]="mod.slug">{{ mod.name }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-txt-primary">Nivel</label>
+                    <select
+                        class="w-full h-10 px-3 rounded-lg border border-border bg-background text-txt-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        [(ngModel)]="selectedLevelSlug" (change)="onFilterChange()">
+                        <option value="">Todos los niveles</option>
+                        @for (lv of levels; track lv.id) {
+                        <option [value]="lv.slug">{{ lv.name }}</option>
+                        }
+                    </select>
+                </div>
+
+                @if (showSpecialization) {
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-txt-primary">Especialidad</label>
+                    <select
+                        class="w-full h-10 px-3 rounded-lg border border-border bg-background text-txt-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary transition"
+                        [(ngModel)]="selectedSpecializationSlug" (change)="onFilterChange()">
+                        <option value="">Todas las especialidades</option>
+                        @for (spec of specializations; track spec.id) {
+                        <option [value]="spec.slug">{{ spec.name }}</option>
+                        }
+                    </select>
+                </div>
+                }
+            </div>
+        </app-card>
+
+        <!-- Results -->
+        <div class="mt-8">
+            @if (syllabi.length > 0) {
+            <div class="flex items-center justify-between mb-4">
+                <p class="text-sm text-txt-secondary">
+                    {{ totalItems }} temario{{ totalItems !== 1 ? 's' : '' }} encontrado{{ totalItems !== 1 ? 's' : '' }}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (syllabus of syllabi; track syllabus.slug) {
+                <app-card [fullHeight]="true">
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-lg font-bold text-txt-primary mb-2 leading-snug">{{ syllabus.name }}</h3>
+                        <div class="mt-auto flex justify-center">
+                            <app-secondary-button label="Comenzar" variant="primary" (click)="startSyllabus(syllabus)" />
+                        </div>
+                    </div>
+                </app-card>
+                }
+            </div>
+
+            <div class="mt-8">
+                <app-pagination [currentPage]="pagination.page" [totalPages]="totalPages"
+                    (pageChange)="onPageChange($event)" />
+            </div>
+            } @else {
+            <div class="text-center py-20 bg-surface border border-border rounded-xl">
+                <p class="text-lg font-semibold text-txt-primary mb-1">No se encontraron temarios</p>
+                <p class="text-txt-secondary text-sm">Intenta ajustar los filtros de búsqueda</p>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+@switch (modalMode) {
+    @case ('confirm') {
+    <app-confirm-modal
+        title="Iniciar temario"
+        [message]="'¿Estás seguro de que deseas iniciar el temario &quot;' + pendingSyllabusName + '&quot;?'"
+        confirmLabel="Comenzar"
+        cancelLabel="Cancelar"
+        confirmVariant="primary"
+        (confirm)="confirmStart()"
+        (cancel)="cancelStart()" />
+    }
+    @case ('alreadyStarted') {
+    <app-confirm-modal
+        title="Temario en curso"
+        [message]="'Ya estás cursando el temario &quot;' + pendingSyllabusName + '&quot;. ¿Qué deseas hacer?'"
+        confirmLabel="Iniciar de todos modos"
+        secondaryLabel="Ir al temario"
+        cancelLabel="Cancelar"
+        confirmVariant="primary"
+        (confirm)="confirmStart()"
+        (secondary)="goToExistingSyllabus()"
+        (cancel)="cancelStart()" />
+    }
+}

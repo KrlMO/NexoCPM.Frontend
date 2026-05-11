@@ -1,17 +1,351 @@
-<div>
-    <section class="min-h-screen flex items-center justify-center px-4 py-12">
-        <app-card class="w-full max-w-5xl p-8 md:p-12 group">
-            <div class="flex flex-col md:flex-row items-center gap-8">
-                <div class="w-full md:w-1/2">
-                    <h1 class="text-3xl md:text-4xl font-bold text-txt-primary mb-4">
-                        Prepárate para la CPM con NexoCPM
-                    </h1>
-                    <div>
-                        <app-primary-button label="Iniciar primer simulacro" variant="pink"/>
-                        <app-primary-button label="Explorar temarios" variant="pink"/>
+<div class="bg-background min-h-screen">
+    @if (userHasInfo) {
+    <!-- Hero - Continue Preparation -->
+    <section class="px-4 md:px-8 lg:px-12 py-8 md:py-12">
+        <div class="max-w-7xl mx-auto">
+            @if (userDashboard?.lastSyllabus) {
+            <app-card>
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                    <div class="flex-1 w-full">
+                        <h2 class="text-2xl md:text-3xl font-bold text-txt-primary mb-1">
+                            Continua con tu preparación
+                        </h2>
+                        <p class="text-sm text-txt-secondary mb-5">
+                            Retoma donde lo dejaste
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+                            <div>
+                                <span class="text-xs uppercase tracking-wider text-txt-secondary font-medium">Modalidad</span>
+                                <p class="font-semibold text-txt-primary mt-0.5">{{ lastModalityName }}</p>
+                            </div>
+                            <div>
+                                <span class="text-xs uppercase tracking-wider text-txt-secondary font-medium">Nivel</span>
+                                <p class="font-semibold text-txt-primary mt-0.5">{{ lastLevelName }}</p>
+                            </div>
+                            <div>
+                                <span class="text-xs uppercase tracking-wider text-txt-secondary font-medium">Especialidad</span>
+                                <p class="font-semibold text-txt-primary mt-0.5">{{ lastSpecialityName }}</p>
+                            </div>
+                        </div>
+                        <div class="max-w-sm">
+                            <div class="flex justify-between text-sm mb-1.5">
+                                <span class="text-txt-secondary">Progreso</span>
+                                <span class="font-semibold text-txt-primary">{{ userDashboard?.lastSyllabus?.completedPercentage }}%</span>
+                            </div>
+                            <app-progress-bar [percentage]="userDashboard?.lastSyllabus?.completedPercentage??0" [color]="'#5100B4'" />
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-auto shrink-0">
+                        <app-primary-button label="Continuar desde lo dejaste" variant="pink" class="w-full lg:w-auto" (click)="startSyllabus(userDashboard?.lastSyllabus!)" />
+                    </div>
+                </div>
+            </app-card>
+            } @else {
+            <div class="text-center py-8 md:py-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-txt-primary mb-3">
+                    ¡Bienvenido!
+                </h2>
+                <p class="text-txt-secondary mb-8 max-w-lg mx-auto">
+                    Comienza tu preparación y da el primer paso hacia tu éxito.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <app-primary-button label="Iniciar primer simulacro" variant="pink" />
+                    <app-primary-button label="Explorar temarios" variant="primary" (click)="goToSyllabi()" />
+                </div>
+            </div>
+            }
+        </div>
+    </section>
+
+    <!-- Stats Grid -->
+    <section class="px-4 md:px-8 lg:px-12 pb-8 md:pb-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow">
+                    <p class="text-3xl md:text-4xl font-bold text-primary">{{userDashboard?.progressPercentage??0}}%</p>
+                    <p class="text-sm text-txt-secondary mt-1.5 font-medium">Progreso general</p>
+                </div>
+                <div class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow">
+                    <p class="text-3xl md:text-4xl font-bold text-secondary">{{userDashboard?.totalTests??0}}</p>
+                    <p class="text-sm text-txt-secondary mt-1.5 font-medium">Pruebas realizadas</p>
+                </div>
+                <div class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow">
+                    <p class="text-3xl md:text-4xl font-bold text-primary">{{userDashboard?.ranking??'--'}}</p>
+                    <p class="text-sm text-txt-secondary mt-1.5 font-medium">Ranking general</p>
+                </div>
+                <div class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow">
+                    <p class="text-3xl md:text-4xl font-bold text-yellow-500">{{userDashboard?.totalStars??0}}</p>
+                    <p class="text-sm text-txt-secondary mt-1.5 font-medium">Estrellas</p>
+                </div>
+                <div class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow">
+                    <p class="text-3xl md:text-4xl font-bold text-primary-pink">{{userDashboard?.totalSimulations??0}}</p>
+                    <p class="text-sm text-txt-secondary mt-1.5 font-medium">Simulacros</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Active Syllabi -->
+    <section class="px-4 md:px-8 lg:px-12 pb-8 md:pb-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-txt-primary">Temarios activos</h2>
+                @if ((userDashboard?.totalSyllabus ?? 0) > 3) {
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/me/syllabi">
+                    Ver todos &rarr;
+                </a>
+                }
+            </div>
+            @if ((userDashboard?.activeSyllabus?.length ?? 0) > 0) {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (syllabus of (userDashboard?.activeSyllabus ?? []); track $index) {
+                <app-card>
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-lg font-bold text-txt-primary mb-1">
+                            {{ syllabus.name }}
+                        </h3>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-1.5">
+                                <span class="text-txt-secondary">Completado</span>
+                                <span class="font-semibold text-txt-primary">{{ syllabus.completedPercentage }}%</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-500"
+                                     [style.width.%]="syllabus.completedPercentage"
+                                     [style.background-color]="'#5100B4'"></div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-txt-secondary space-y-1 mb-5">
+                            @if (syllabus.lastUnitName) {
+                            <p>Última unidad: <span class="text-txt-primary font-medium">{{syllabus.lastUnitName}}</span></p>
+                            }
+                            @if (syllabus.lastActivity) {
+                            <p>Último acceso: <span class="text-txt-primary font-medium">{{syllabus.lastActivity}}</span></p>
+                            }
+                        </div>
+                        <div class="mt-auto">
+                            <app-secondary-button label="Continuar" variant="primary" (click)="startSyllabus(syllabus)" />
+                        </div>
+                    </div>
+                </app-card>
+                }
+            </div>
+            @if ((userDashboard?.totalSyllabus ?? 0) > 3) {
+            <div class="text-center mt-6 sm:hidden">
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm" routerLink="/app/me/syllabi">
+                    Ver todos &rarr;
+                </a>
+            </div>
+            }
+            } @else {
+            <div class="text-center py-16 bg-surface border border-border rounded-xl">
+                <p class="text-txt-secondary text-lg mb-1">No tienes temarios activos</p>
+                <p class="text-txt-secondary text-sm mb-6">Explora y comienza un nuevo temario</p>
+                <app-primary-button label="Explorar temarios" variant="primary" (click)="goToSyllabi()" />
+            </div>
+            }
+        </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="px-4 md:px-8 lg:px-12 pb-8 md:pb-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-txt-primary">Recomendaciones del día</h2>
+                @if ((userDashboard?.recommendations?.length ?? 0) > 3) {
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/me/recommendations">
+                    Ver más &rarr;
+                </a>
+                }
+            </div>
+            @if ((userDashboard?.recommendations?.length ?? 0) > 0) {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @for (recommendation of (userDashboard?.recommendations ?? []); track $index) {
+                <div class="bg-surface border border-border rounded-lg shadow-sm p-4 flex items-start gap-3 hover:shadow-md transition-shadow">
+                    <span class="w-2 h-2 rounded-full bg-primary shrink-0 mt-2"></span>
+                    <p class="text-txt-secondary text-sm leading-relaxed">{{ recommendation }}</p>
+                </div>
+                }
+            </div>
+            @if ((userDashboard?.recommendations?.length ?? 0) > 3) {
+            <div class="text-center mt-6 sm:hidden">
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm" routerLink="/app/me/recommendations">
+                    Ver más &rarr;
+                </a>
+            </div>
+            }
+            } @else {
+            <div class="text-center py-16 bg-surface border border-border rounded-xl">
+                <p class="text-txt-secondary text-lg mb-1">No hay recomendaciones por ahora</p>
+                <p class="text-txt-secondary text-sm">¡Sigue practicando y vuelve más tarde!</p>
+            </div>
+            }
+        </div>
+    </section>
+
+    <!-- Last Simulations -->
+    <section class="px-4 md:px-8 lg:px-12 pb-8 md:pb-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-txt-primary">Últimos simulacros</h2>
+                @if ((userDashboard?.totalSimulations ?? 0) > 2) {
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/me/simulations">
+                    Ver todos &rarr;
+                </a>
+                }
+            </div>
+            @if ((userDashboard?.lastSimulations?.length ?? 0) > 0) {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (simulation of (userDashboard?.lastSimulations ?? []); track $index) {
+                <app-card>
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-lg font-bold text-txt-primary mb-1">
+                            {{ simulation.modalityName }}
+                        </h3>
+                        <p class="text-sm text-txt-secondary mb-4">
+                            {{ simulation.levelName }} · {{ simulation.specialityName }}
+                        </p>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-4 text-sm">
+                            <div>
+                                <span class="text-txt-secondary block text-xs">Puntaje</span>
+                                <span class="font-bold text-txt-primary text-lg">{{ simulation.score }}</span>
+                            </div>
+                            <div>
+                                <span class="text-txt-secondary block text-xs">Aciertos</span>
+                                <span class="font-semibold text-txt-primary">{{ simulation.correctAnswers }}/{{ simulation.totalQuestions }}</span>
+                            </div>
+                            <div>
+                                <span class="text-txt-secondary block text-xs">Tiempo</span>
+                                <span class="font-semibold text-txt-primary">{{ simulation.durationMinutes }} min</span>
+                            </div>
+                            <div>
+                                <span class="text-txt-secondary block text-xs">Fecha</span>
+                                <span class="font-semibold text-txt-primary">{{ simulation.finishedAt }}</span>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <app-star-rating [rating]="simulation.starEarned" [max]="5" />
+                        </div>
+                    </div>
+                </app-card>
+                }
+            </div>
+            @if ((userDashboard?.totalSimulations ?? 0) > 2) {
+            <div class="text-center mt-6 sm:hidden">
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm" routerLink="/app/me/simulations">
+                    Ver todos &rarr;
+                </a>
+            </div>
+            }
+            } @else {
+            <div class="text-center py-16 bg-surface border border-border rounded-xl">
+                <p class="text-xl font-semibold text-txt-primary mb-2">Aún no tienes simulacros realizados</p>
+                <p class="text-txt-secondary mb-6">Realiza tu primer intento para ver tu progreso</p>
+                <app-primary-button label="Realizar primer simulacro" variant="pink" />
+            </div>
+            }
+        </div>
+    </section>
+
+    } @else {
+    <!-- Onboarding Hero -->
+    <section class="px-4 md:px-8 lg:px-12 py-10 md:py-16">
+        <div class="max-w-3xl mx-auto">
+            <div class="relative group">
+                <div class="absolute inset-0 translate-y-3 rounded-xl bg-gradient-to-br from-primary to-primary-dark opacity-70"></div>
+                <div class="relative bg-surface rounded-xl shadow-lg p-6 md:p-10 text-center transition-all duration-300 group-hover:-translate-y-2">
+                    <h2 class="text-2xl md:text-4xl font-bold text-txt-primary mb-3 leading-tight">
+                        Empieza tu preparación ahora
+                    </h2>
+                    <p class="text-txt-secondary text-base md:text-lg mb-6 max-w-lg mx-auto">
+                        Accede a temarios, simulacros y herramientas diseñadas para tu éxito.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <app-primary-button label="Iniciar primer simulacro" variant="pink" />
+                        <app-primary-button label="Explorar temarios" variant="primary" (click)="goToSyllabi()" />
                     </div>
                 </div>
             </div>
-        </app-card> 
+        </div>
     </section>
+
+    <!-- Available Syllabi -->
+    <section class="px-4 md:px-8 lg:px-12 pb-12 md:pb-20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-txt-primary mb-6">
+                Temarios disponibles
+            </h2>
+            @if ((availableSyllabus?.length ?? 0) > 0) {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (syllabus of (availableSyllabus ?? []); track $index) {
+                <app-card>
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-lg font-bold text-txt-primary mb-1">
+                            {{ syllabus.name }}
+                        </h3>
+                        <div class="mt-auto flex justify-center">
+                            <app-secondary-button label="Comenzar" variant="primary" (click)="startSyllabus(syllabus)" />
+                        </div>
+                    </div>
+                </app-card>
+                }
+            </div>
+            <div class="text-center mt-6">
+                <a class="text-primary hover:text-primary-dark transition font-medium" routerLink="/app/syllabi">
+                    Ver todos los temarios &rarr;
+                </a>
+            </div>
+            } @else {
+            <div class="text-center py-16 bg-surface border border-border rounded-xl">
+                <p class="text-txt-secondary text-lg">Cargando temarios disponibles...</p>
+            </div>
+            }
+        </div>
+    </section>
+
+    <div class="px-4 md:px-8 lg:px-12">
+        <div class="max-w-7xl mx-auto">
+            <app-line />
+        </div>
+    </div>
+
+    <!-- Empty Simulations State -->
+    <section class="px-4 md:px-8 lg:px-12 py-12 md:py-20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-txt-primary mb-6">
+                Últimos simulacros realizados
+            </h2>
+            <div class="text-center py-16 bg-surface border border-border rounded-xl max-w-2xl mx-auto">
+                <p class="text-xl font-semibold text-txt-primary mb-2">Aún no tienes simulacros realizados</p>
+                <p class="text-txt-secondary mb-6">Realiza tu primer intento para ver tu progreso</p>
+                <app-primary-button label="Realizar primer simulacro" variant="pink" />
+            </div>
+        </div>
+    </section>
+    }
+
+    @switch (modalMode) {
+        @case ('confirm') {
+        <app-confirm-modal
+            title="Iniciar temario"
+            [message]="'¿Estás seguro de que deseas iniciar el temario &quot;' + pendingSyllabusName + '&quot;?'"
+            confirmLabel="Comenzar"
+            cancelLabel="Cancelar"
+            confirmVariant="primary"
+            (confirm)="confirmStart()"
+            (cancel)="cancelStart()" />
+        }
+        @case ('alreadyStarted') {
+        <app-confirm-modal
+            title="Temario en curso"
+            [message]="'Ya estás cursando el temario &quot;' + pendingSyllabusName + '&quot;. ¿Qué deseas hacer?'"
+            confirmLabel="Iniciar de todos modos"
+            secondaryLabel="Ir al temario"
+            cancelLabel="Cancelar"
+            confirmVariant="primary"
+            (confirm)="confirmStart()"
+            (secondary)="goToExistingSyllabus()"
+            (cancel)="cancelStart()" />
+        }
+    }
 </div>

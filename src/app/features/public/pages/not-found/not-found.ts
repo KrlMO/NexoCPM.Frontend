@@ -4,7 +4,7 @@ import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/s
 
 @Component({
   selector: 'app-not-found',
-  imports: [SecondaryButton, RouterLink],
+  imports: [SecondaryButton],
   templateUrl: './not-found.html',
   styleUrl: './not-found.css',
 })

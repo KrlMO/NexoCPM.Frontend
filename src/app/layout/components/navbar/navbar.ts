@@ -33,6 +33,14 @@ export class Navbar {
     this.userMenuOpen = !this.userMenuOpen;
   }
 
+  goHome() {
+    if (this.auth.isAuthenticated()) {
+      this.router.navigate(['/app/home']);
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
   goLogin() {
     this.router.navigate(['/auth/login']);
   }

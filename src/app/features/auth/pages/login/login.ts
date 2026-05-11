@@ -5,10 +5,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MainInput } from '../../../../shared/ui/main-input/main-input';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
-import { LoginRequest, LoginResponse } from '../../models/auth.model';
 import { Auth } from '../../services/auth.service';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { ApiResponse } from '../../../../core/models/api-response.model';
+import { LoginResponse } from '../../models/auth-responses.model';
+import { LoginRequest } from '../../models/auth-requests.model';
 
 @Component({
   selector: 'app-login',
@@ -57,7 +58,7 @@ export class Login implements OnInit {
     const data = this.loginForm.value as LoginRequest;
     this.authService.login(data).subscribe({
       next: (res: ApiResponse<LoginResponse>) => {
-        this.toastService.success('Bienvenido ' + res.data?.user.firstName + ' 🚀');
+        this.toastService.success('Bienvenido ' + res.data?.user.firstName);
         this.router.navigate(['/app/home']);
       },
       error: (err) => {

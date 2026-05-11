@@ -4,7 +4,7 @@ import { BehaviorSubject, catchError, of, tap } from 'rxjs';
 import { API_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/api-response.model';
 import { LoginResponse, RegisterResponse } from '../models/auth-responses.model';
-import { RegisterRequest } from '../models/auth-requests.model';
+import { LoginRequest, RegisterRequest } from '../models/auth-requests.model';
 
 export const REFRESH_TOKEN_COOKIE = 'RefreshToken';
 
@@ -21,7 +21,7 @@ export class Auth {
     return { withCredentials: true };
   }
 
-  login(credentials: { email: string; password: string }) {
+  public login(credentials: LoginRequest) {
     return this.http.post<ApiResponse<LoginResponse>>(`${this.apiUrl}/login`, credentials, this.withCreds()).pipe(
       tap((res: ApiResponse<LoginResponse>) => {
         this.token = res.data?.accessToken || null;
@@ -32,25 +32,25 @@ export class Auth {
 
   isLoggedIn$ = this.user$.asObservable();
 
-  getToken() {
+  public getToken() {
     return this.token;
   }
 
-  getUser() {
+  public getUser() {
     return this.user$.asObservable();
   }
 
-  logout() {
+  public logout() {
     this.token = null;
     this.user$.next(null);
     return this.http.post(`${this.apiUrl}/logout`, {}, this.withCreds());
   }
 
-  register(data: RegisterRequest) {
+  public register(data: RegisterRequest) {
     return this.http.post<ApiResponse<RegisterResponse>>(`${this.apiUrl}/register`, data, this.withCreds());
   }
 
-  refreshToken() {
+  public refreshToken() {
     return this.http.post<ApiResponse<LoginResponse>>(
       `${this.apiUrl}/refresh`,
       {},

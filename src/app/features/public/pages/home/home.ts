@@ -7,8 +7,7 @@ import { Router, RouterLink } from '@angular/router';
   selector: 'app-home',
   imports: [
     SecondaryButton,
-    Card,
-    RouterLink
+    Card
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

@@ -1,34 +1,28 @@
 <nav class="w-full h-16 px-4 md:px-6 flex items-center justify-between bg-surface text-txt-primary shadow-md relative">
 
-    <!-- LOGO -->
     <a routerLink="/" class="flex items-center">
         <img src="logos/logo.svg" width="50" height="40" alt="Logo NexoCPM">
     </a>
 
-    <!-- LINKS DESKTOP -->
     <div class="hidden md:flex items-center gap-6 text-gray-600">
-        <a routerLink="/" class="hover:text-primary-dark transition">Inicio</a>
-        <a routerLink="/sillabi" class="hover:text-primary-dark transition">Temarios</a>
+        <a (click)="goHome()" class="hover:text-primary-dark transition cursor-pointer">Inicio</a>
+        <a routerLink="/app/syllabi" class="hover:text-primary-dark transition">Temarios</a>
+        <a routerLink="/app/simulations" class="hover:text-primary-dark transition">Simulacros</a>
         <a routerLink="/app/ranking" class="hover:text-primary-dark transition">Ranking</a>
     </div>
 
-    <!-- ACTIONS -->
     <div class="flex items-center gap-2 md:gap-4">
 
-        <!-- NO LOGEADO -->
         @if (!(user$ | async)) {
         <app-primary-button class="hidden md:block" label="Iniciar Sesión" (click)="goLogin()" />
 
-        <!-- BOTÓN MOBILE -->
         <button class="md:hidden p-2" (click)="toggleMobileMenu()">
             ☰
         </button>
         }
 
-        <!-- LOGEADO -->
         @if (user$ | async; as user) {
 
-        <!-- DESKTOP USER -->
         <div class="hidden md:block relative">
             <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
                 (click)="toggleUserMenu()">
@@ -45,7 +39,6 @@
             </div>
         </div>
 
-        <!-- MOBILE BUTTON -->
         <button class="md:hidden p-2" (click)="toggleMobileMenu()">
             ☰
         </button>
@@ -55,23 +48,21 @@
     </div>
 </nav>
 
-<!-- MOBILE MENU -->
 <div *ngIf="mobileMenuOpen" class="md:hidden bg-white border-t shadow-lg px-4 py-4 flex flex-col gap-3">
 
     <!-- LINKS -->
-    <a routerLink="/" (click)="closeMobileMenu()">Inicio</a>
-    <a routerLink="/sillabi" (click)="closeMobileMenu()">Temarios</a>
+    <a (click)="goHome(); closeMobileMenu()" class="cursor-pointer">Inicio</a>
+    <a routerLink="/app/syllabi" (click)="closeMobileMenu()">Temarios</a>
+    <a routerLink="/app/simulations" (click)="closeMobileMenu()">Simulacros</a>
     <a routerLink="/app/ranking" (click)="closeMobileMenu()">Ranking</a>
     <hr>
 
-    <!-- NO LOGEADO -->
     @if (!(user$ | async)) {
         <div class="flex justify-center">
             <app-primary-button label="Iniciar sesión" (click)="goLogin(); closeMobileMenu()" />
         </div>
     }
 
-    <!-- LOGEADO -->
     @if (user$ | async; as user) {
     <button (click)="goProfile(); closeMobileMenu()">Perfil</button>
     <button (click)="goPreparation(); closeMobileMenu()">Mi preparación</button>
