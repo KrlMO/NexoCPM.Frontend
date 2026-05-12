@@ -1,3 +1,5 @@
+import { UserSyllabusUnit } from "./user-syllabus-unit.model";
+
 export interface UserSyllabus{
     id: number;
     name: string;
@@ -6,4 +8,7 @@ export interface UserSyllabus{
     lastAccess?: Date;
     completedPercentage: number;
     lastUnitName: string;
+    status: 'IN_PROGRESS' | 'COMPLETED';
+    userLearningContextId?: number;
+    syllabusUnits: UserSyllabusUnit[];
 }

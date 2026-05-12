@@ -64,7 +64,6 @@ export class MySyllabi implements OnInit {
       this.pagination
     ).subscribe({
       next: (res: ApiResponse<GetMySyllabiResponse>) => {
-        debugger
         this.isLoading = false;
         const result = res.data?.mySyllabi;
         this.mySyllabi = result?.items ?? [];
@@ -106,7 +105,12 @@ export class MySyllabi implements OnInit {
   }
 
   continueSyllabus(syllabus: UserSyllabus) {
-    this.toastService.info(`Continuar con "${syllabus.name}" (próximamente).`);
+
+    if (!syllabus.id) {
+      this.toastService.error('No se encontró el contexto de aprendizaje.');
+      return;
+    }
+    this.router.navigate(['/app/my-syllabi', syllabus.id, syllabus.slug]);
   }
 
   goToSyllabi() {

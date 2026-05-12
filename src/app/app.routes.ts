@@ -56,6 +56,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/dashboard/pages/preparation-dashboard/preparation-dashboard').then(m => m.PreparationDashboard)
             },
             {
+                path: 'my-syllabi/:learningContextId/:slug',
+                loadComponent: () => import('./features/curriculum/pages/syllabus-detail/syllabus-detail').then(m => m.SyllabusDetail)
+            },
+            {
                 path: 'my-syllabi',
                 loadComponent: () => import('./features/curriculum/pages/my-syllabi/my-syllabi').then(m => m.MySyllabi)
             }

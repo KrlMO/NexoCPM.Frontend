@@ -3,7 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/api-response.model';
 import { PaginationParams } from '../../../shared/models/pagination.model';
-import { GetMySyllabiResponse, HasCurrentSyllabusResponse, StartSyllabusResponse } from '../models/users-response.model';
+import {
+  GetMySyllabiResponse,
+  GetTopicSubtopicsResponse,
+  GetUnitTopicsResponse,
+  GetUserSyllabusDetailResponse,
+  HasCurrentSyllabusResponse,
+  StartSyllabusResponse,
+} from '../models/users-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,5 +44,17 @@ export class UsersService {
     }
 
     return this.http.get<ApiResponse<GetMySyllabiResponse>>(`${this.apiUrl}/me/syllabi`, { params });
+  }
+
+  public loadSyllabus(learningContextId: number, syllabusSlug: string) {
+    return this.http.get<ApiResponse<GetUserSyllabusDetailResponse>>(`${this.apiUrl}/me/syllabus/${learningContextId}/${syllabusSlug}`);
+  }
+
+  public loadUnitTopics(learningContextId: number, unitId: number) {
+    return this.http.get<ApiResponse<GetUnitTopicsResponse>>(`${this.apiUrl}/me/syllabus/${learningContextId}/units/${unitId}/topics`);
+  }
+
+  public loadTopicSubtopics(learningContextId: number, topicId: number) {
+    return this.http.get<ApiResponse<GetTopicSubtopicsResponse>>(`${this.apiUrl}/me/syllabus/${learningContextId}/topics/${topicId}/subtopics`);
   }
 }

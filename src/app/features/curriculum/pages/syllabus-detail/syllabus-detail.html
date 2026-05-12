@@ -1,0 +1,113 @@
+<div class="bg-background min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+
+        <button (click)="goBack()" class="text-primary hover:text-primary-dark transition font-medium text-sm mb-6 flex items-center gap-1">
+            ← Volver a mis temarios
+        </button>
+
+        @if (isLoading) {
+        <div class="text-center py-20">
+            <p class="text-txt-secondary">Cargando temario...</p>
+        </div>
+        } @else if (error || !syllabus) {
+        <div class="text-center py-20 bg-surface border border-border rounded-xl">
+            <p class="text-lg font-semibold text-txt-primary mb-2">No se pudo cargar el temario</p>
+            <app-secondary-button label="Intentar de nuevo" variant="primary" (click)="retry()" />
+        </div>
+        } @else {
+        <div class="mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-txt-primary mb-4">{{ syllabus.name }}</h1>
+
+            <div class="max-w-sm">
+                <div class="flex justify-between text-sm mb-1.5">
+                    <span class="text-txt-secondary">Progreso general</span>
+                    <span class="font-semibold text-txt-primary">{{ syllabus.completedPercentage }}%</span>
+                </div>
+                <app-progress-bar [percentage]="syllabus.completedPercentage" color="#5100B4" />
+            </div>
+        </div>
+
+        <div class="space-y-1">
+            @for (unit of syllabus.units; track unit.id) {
+            <div class="bg-surface border border-border rounded-lg overflow-hidden">
+
+                <div (click)="toggleUnit(unit)" class="flex items-center gap-3 px-4 py-3.5 cursor-pointer hover:bg-gray-50 transition select-none">
+                    <span class="text-xs text-txt-secondary shrink-0 w-4 text-center">
+                        {{ expandedUnits.has(unit.id) ? '▼' : '▶' }}
+                    </span>
+                    <span class="font-semibold text-txt-primary flex-1">{{ unit.name }}</span>
+
+                    <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"
+                        [class.bg-amber-100]="getUnitBadgeClass(unit.status) === 'badge-amber'"
+                        [class.text-amber-700]="getUnitBadgeClass(unit.status) === 'badge-amber'"
+                        [class.bg-green-100]="getUnitBadgeClass(unit.status) === 'badge-green'"
+                        [class.text-green-700]="getUnitBadgeClass(unit.status) === 'badge-green'"
+                        [class.bg-gray-100]="getUnitBadgeClass(unit.status) === 'badge-gray'"
+                        [class.text-gray-600]="getUnitBadgeClass(unit.status) === 'badge-gray'">
+                        {{ getUnitStatusLabel(unit.status) }}
+                    </span>
+
+                    @if (loadingUnits.has(unit.id)) {
+                    <span class="text-xs text-txt-secondary animate-pulse">Cargando...</span>
+                    }
+                </div>
+
+                @if (expandedUnits.has(unit.id) && unit.topics) {
+                <div class="border-t border-border">
+                    @for (topic of unit.topics; track topic.id) {
+                    <div class="border-b border-border last:border-b-0">
+
+                        <div (click)="toggleTopic(topic)" class="flex items-center gap-3 pl-10 pr-4 py-3 cursor-pointer hover:bg-gray-50 transition select-none">
+                            <span class="text-xs text-txt-secondary shrink-0 w-4 text-center">
+                                {{ expandedTopics.has(topic.id) ? '▼' : '▶' }}
+                            </span>
+                            <span class="text-txt-primary flex-1">{{ topic.description }}</span>
+
+                            <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"
+                                [class.bg-green-100]="getTopicBadgeClass(topic) === 'badge-green'"
+                                [class.text-green-700]="getTopicBadgeClass(topic) === 'badge-green'"
+                                [class.bg-amber-100]="getTopicBadgeClass(topic) === 'badge-amber'"
+                                [class.text-amber-700]="getTopicBadgeClass(topic) === 'badge-amber'"
+                                [class.bg-gray-100]="getTopicBadgeClass(topic) === 'badge-gray'"
+                                [class.text-gray-600]="getTopicBadgeClass(topic) === 'badge-gray'">
+                                {{ getTopicStatus(topic) }}
+                            </span>
+
+                            @if (loadingTopics.has(topic.id)) {
+                            <span class="text-xs text-txt-secondary animate-pulse">Cargando...</span>
+                            }
+                        </div>
+
+                        @if (expandedTopics.has(topic.id) && topic.subTopics) {
+                        <div class="bg-gray-50">
+                            @for (subtopic of topic.subTopics; track subtopic.id) {
+                            <div class="pl-16 pr-4 py-3 border-t border-border first:border-t-0">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="font-medium text-txt-primary text-sm">{{ subtopic.description }}</span>
+                                            <span class="text-xs font-medium px-2 py-0.5 rounded-full shrink-0"
+                                                [class.bg-green-100]="subtopic.viewed"
+                                                [class.text-green-700]="subtopic.viewed"
+                                                [class.bg-gray-100]="!subtopic.viewed"
+                                                [class.text-gray-600]="!subtopic.viewed">
+                                                {{ subtopic.viewed ? 'VISTO' : 'NO VISTO' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <app-secondary-button label="Ver más detalles" variant="primary" (click)="showSubtopicDetail(subtopic)" />
+                                </div>
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>
