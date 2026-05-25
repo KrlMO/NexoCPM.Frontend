@@ -1,10 +1,11 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { PrimaryButton } from '../button/primary-button/primary-button';
-import { SecondaryButton } from '../button/secondary-button/secondary-button';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { GeneralModal } from '../general-modal/general-modal';
+import { PrimaryButton } from '../../button/primary-button/primary-button';
+import { SecondaryButton } from '../../button/secondary-button/secondary-button';
 
 @Component({
   selector: 'app-confirm-modal',
-  imports: [PrimaryButton, SecondaryButton],
+  imports: [GeneralModal, PrimaryButton, SecondaryButton],
   templateUrl: './confirm-modal.html',
   styleUrl: './confirm-modal.css',
 })
@@ -19,9 +20,4 @@ export class ConfirmModal {
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
   @Output() secondary = new EventEmitter<void>();
-
-  @HostListener('document:keydown.escape')
-  onEscape() {
-    this.cancel.emit();
-  }
 }

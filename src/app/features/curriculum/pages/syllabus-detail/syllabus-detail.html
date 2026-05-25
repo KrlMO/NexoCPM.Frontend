@@ -1,7 +1,8 @@
 <div class="bg-background min-h-screen">
     <div class="max-w-4xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
 
-        <button (click)="goBack()" class="text-primary hover:text-primary-dark transition font-medium text-sm mb-6 flex items-center gap-1">
+        <button (click)="goBack()"
+            class="text-primary hover:text-primary-dark transition font-medium text-sm mb-6 flex items-center gap-1">
             ← Volver a mis temarios
         </button>
 
@@ -27,11 +28,12 @@
             </div>
         </div>
 
-        <div class="space-y-1">
+        <div class="space-y-3">
             @for (unit of syllabus.units; track unit.id) {
             <div class="bg-surface border border-border rounded-lg overflow-hidden">
 
-                <div (click)="toggleUnit(unit)" class="flex items-center gap-3 px-4 py-3.5 cursor-pointer hover:bg-gray-50 transition select-none">
+                <div (click)="toggleUnit(unit)"
+                    class="flex items-center gap-3 px-4 py-3.5 cursor-pointer hover:bg-gray-50 transition select-none">
                     <span class="text-xs text-txt-secondary shrink-0 w-4 text-center">
                         {{ expandedUnits.has(unit.id) ? '▼' : '▶' }}
                     </span>
@@ -57,7 +59,8 @@
                     @for (topic of unit.topics; track topic.id) {
                     <div class="border-b border-border last:border-b-0">
 
-                        <div (click)="toggleTopic(topic)" class="flex items-center gap-3 pl-10 pr-4 py-3 cursor-pointer hover:bg-gray-50 transition select-none">
+                        <div (click)="toggleTopic(topic)"
+                            class="flex items-center gap-3 pl-10 pr-4 py-3 cursor-pointer hover:bg-gray-50 transition select-none">
                             <span class="text-xs text-txt-secondary shrink-0 w-4 text-center">
                                 {{ expandedTopics.has(topic.id) ? '▼' : '▶' }}
                             </span>
@@ -82,20 +85,23 @@
                         <div class="bg-gray-50">
                             @for (subtopic of topic.subTopics; track subtopic.id) {
                             <div class="pl-16 pr-4 py-3 border-t border-border first:border-t-0">
-                                <div class="flex items-start gap-3">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <span class="font-medium text-txt-primary text-sm">{{ subtopic.description }}</span>
-                                            <span class="text-xs font-medium px-2 py-0.5 rounded-full shrink-0"
-                                                [class.bg-green-100]="subtopic.viewed"
-                                                [class.text-green-700]="subtopic.viewed"
-                                                [class.bg-gray-100]="!subtopic.viewed"
-                                                [class.text-gray-600]="!subtopic.viewed">
-                                                {{ subtopic.viewed ? 'VISTO' : 'NO VISTO' }}
-                                            </span>
-                                        </div>
+                                        <p class="font-medium text-txt-primary text-sm leading-relaxed">
+                                            {{ subtopic.description }}
+                                        </p>
                                     </div>
-                                    <app-secondary-button label="Ver más detalles" variant="primary" (click)="showSubtopicDetail(subtopic)" />
+                                    <div class="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full shrink-0"
+                                            [class.bg-green-100]="subtopic.viewed"
+                                            [class.text-green-700]="subtopic.viewed"
+                                            [class.bg-gray-100]="!subtopic.viewed"
+                                            [class.text-gray-600]="!subtopic.viewed">
+                                            {{ subtopic.viewed ? 'VISTO' : 'NO VISTO' }}
+                                        </span>
+                                        <app-secondary-button label="Ver detalle" variant="primary"
+                                            (click)="showSubtopicDetail(subtopic)" />
+                                    </div>
                                 </div>
                             </div>
                             }
@@ -103,11 +109,63 @@
                         }
                     </div>
                     }
+
+                    @if (unit.unitTest) {
+                    <div class="border-t border-border bg-indigo-50/50 px-4 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-txt-primary text-sm">Prueba de unidad</p>
+                                <p class="text-xs text-txt-secondary mt-0.5">Evalúa lo aprendido en esta unidad.</p>
+                            </div>
+                            <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"
+                                [class.bg-green-100]="unit.unitTest.status === 'APPROVED'"
+                                [class.text-green-700]="unit.unitTest.status === 'APPROVED'"
+                                [class.bg-red-100]="unit.unitTest.status === 'DISAPPROVED'"
+                                [class.text-red-700]="unit.unitTest.status === 'DISAPPROVED'"
+                                [class.bg-gray-100]="unit.unitTest.status === 'NOT_STARTED'"
+                                [class.text-gray-600]="unit.unitTest.status === 'NOT_STARTED'">
+                                {{ getTestStatusLabel(unit.unitTest.status) }}
+                            </span>
+                            <app-primary-button [label]="getTestButtonLabel(unit.unitTest.status)"
+                                (click)="goToTest(unit.unitTest!)" />
+                        </div>
+                    </div>
+                    }
                 </div>
                 }
+            </div>
+            }
+
+            @if (syllabus.fInalSyllabusTest) {
+            <div class="bg-surface border border-border rounded-lg overflow-hidden">
+                <div class="px-4 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-txt-primary">Prueba final del temario</p>
+                            <p class="text-sm text-txt-secondary mt-0.5">Evalúa todos los conocimientos del temario.</p>
+                        </div>
+                        <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"
+                            [class.bg-green-100]="syllabus.fInalSyllabusTest.status === 'APPROVED'"
+                            [class.text-green-700]="syllabus.fInalSyllabusTest.status === 'APPROVED'"
+                            [class.bg-red-100]="syllabus.fInalSyllabusTest.status === 'DISAPPROVED'"
+                            [class.text-red-700]="syllabus.fInalSyllabusTest.status === 'DISAPPROVED'"
+                            [class.bg-gray-100]="syllabus.fInalSyllabusTest.status === 'NOT_STARTED'"
+                            [class.text-gray-600]="syllabus.fInalSyllabusTest.status === 'NOT_STARTED'">
+                            {{ getTestStatusLabel(syllabus.fInalSyllabusTest.status) }}
+                        </span>
+                        <app-primary-button [label]="getTestButtonLabel(syllabus.fInalSyllabusTest.status)"
+                            (click)="goToTest(syllabus.fInalSyllabusTest!)" />
+                    </div>
+                </div>
             </div>
             }
         </div>
         }
     </div>
 </div>
+
+@if (subtopicSlug) {
+<app-subtopic-detail-modal [slug]="subtopicSlug" [learningContextId]="learningContextId"
+    [subtopicSlugs]="currentSubtopicSlugs" (cancel)="closeSubtopicDetail()"
+    (navigate)="onNavigateSubtopic($event)" />
+}

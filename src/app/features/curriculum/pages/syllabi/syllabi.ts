@@ -18,7 +18,7 @@ import { PaginationParams } from '../../../../shared/models/pagination.model';
 import { Auth } from '../../../../features/auth/services/auth.service';
 import { UsersService } from '../../../../features/users/services/users.service';
 import { HasCurrentSyllabusResponse, StartSyllabusResponse } from '../../../../features/users/models/users-response.model';
-import { ConfirmModal } from '../../../../shared/ui/confirm-modal/confirm-modal';
+import { ConfirmModal } from '../../../../shared/ui/modal/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-syllabi',

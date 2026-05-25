@@ -18,6 +18,10 @@ export const routes: Routes = [
             {
                 path: 'verify-email',
                 loadComponent: () => import('./features/auth/pages/verify-email/verify-email').then(m => m.VerifyEmail)
+            },
+            {
+                path: 'verify-account',
+                loadComponent: () => import('./features/auth/pages/verify-account/verify-account').then(m => m.VerifyAccount)
             }
         ]
     },
@@ -52,8 +56,8 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/users/pages/profile/profile').then(m => m.Profile)
             },
             {
-                path: 'progress',
-                loadComponent: () => import('./features/dashboard/pages/preparation-dashboard/preparation-dashboard').then(m => m.PreparationDashboard)
+                path: 'my-progress',
+                loadComponent: () => import('./features/dashboard/pages/my-progress/my-progress').then(m => m.MyProgress)
             },
             {
                 path: 'my-syllabi/:learningContextId/:slug',

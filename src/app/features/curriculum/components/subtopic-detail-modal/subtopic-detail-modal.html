@@ -1,0 +1,146 @@
+<app-general-modal (cancel)="cancel.emit()" containerClass="max-w-4xl">
+    @if (loading()) {
+    <div class="flex items-center justify-center py-16">
+        <p class="text-txt-secondary animate-pulse">Cargando detalle...</p>
+    </div>
+    } @else if (subtopicDetail()) {
+    <div class="min-h-0">
+        <h3 class="text-xl font-bold text-txt-primary mb-6 pr-8">
+            {{ subtopicDetail()?.subTopicDetail?.items?.[0]?.subTopic?.description ?? 'Detalle del subtema' }}
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+            <!-- Microtemas — wider left, always first -->
+            <div class="md:col-span-2 order-1 rounded-xl p-4 bg-micro-bg text-micro-text">
+                <h4 class="font-semibold mb-2 flex items-center gap-1.5">
+                    Microtemas
+                </h4>
+                @if (subtopicDetail()?.subTopicDetail?.items?.[0]?.microTopics?.length) {
+                <ul class="space-y-1">
+                    @for (mt of subtopicDetail()?.subTopicDetail?.items?.[0]?.microTopics; track mt.id) {
+                    <li class="text-sm flex items-start gap-2">
+                        <span class="mt-0.5 shrink-0">•</span>
+                        <span>{{ mt.description }}</span>
+                    </li>
+                    }
+                </ul>
+                } @else {
+                <p class="text-sm opacity-70">Sin microtemas.</p>
+                }
+            </div>
+
+            <!-- Competencia — right column, second on mobile and desktop -->
+            @if (subtopicDetail()?.subTopicDetail?.items?.[0]?.competence) {
+            <div class="order-2 rounded-xl p-4 bg-competence-bg text-competence-text">
+                <h4 class="font-semibold mb-2 flex items-center gap-1.5">
+                    Competencia {{ competenceNumber }}
+                </h4>
+                <p class="text-sm font-medium">
+                    {{ competenceTitle }}
+                </p>
+
+                @if (subtopicDetail()?.subTopicDetail?.items?.[0]?.competence?.abilities?.length) {
+                <div class="mt-3">
+                    <p class="text-xs font-medium mb-1">Capacidades:</p>
+                    <ul class="space-y-0.5">
+                        @for (ability of subtopicDetail()?.subTopicDetail?.items?.[0]?.competence?.abilities; track ability.id) {
+                        <li class="text-sm flex items-start gap-2">
+                            <span class="mt-0.5 shrink-0">•</span>
+                            <span>{{ ability.name }}</span>
+                        </li>
+                        }
+                    </ul>
+                </div>
+                }
+            </div>
+            }
+
+            <!-- Niveles — right column, 3rd on mobile, 4th on desktop -->
+            @if (subtopicDetail()?.subTopicDetail?.items?.[0]?.competence?.competenceLevels?.length) {
+            <div class="order-3 md:order-4 rounded-xl p-4 bg-level-bg text-level-text">
+                <h4 class="font-semibold mb-2 flex items-center gap-1.5">
+                    Niveles del estudiante
+                </h4>
+                <ul class="space-y-1">
+                    @for (level of subtopicDetail()?.subTopicDetail?.items?.[0]?.competence?.competenceLevels; track level.id) {
+                    <li class="text-sm flex items-start gap-2">
+                        <span class="mt-0.5 shrink-0 font-bold text-xs">N{{ level.levelNumber }}:</span>
+                        <span>{{ level.description }}</span>
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+
+            <!-- Recursos — wider left, 4th on mobile, 3rd on desktop -->
+            <div class="md:col-span-2 order-4 md:order-3 rounded-xl p-4 bg-resource-bg text-resource-text">
+                <h4 class="font-semibold mb-2 flex items-center gap-1.5">
+                    Recursos de la comunidad
+                </h4>
+                @if (resources.length) {
+                <ul class="space-y-2">
+                    @for (resource of resources; track resource.id) {
+                    <li class="text-sm flex items-center justify-between gap-2">
+                        <span class="truncate">{{ resource.title }}</span>
+                        <a [href]="resource.url" target="_blank" rel="noopener noreferrer"
+                            class="shrink-0 font-medium underline-offset-2 hover:underline">
+                            Ver
+                        </a>
+                    </li>
+                    }
+                </ul>
+                } @else {
+                <p class="text-sm opacity-70">Aún no hay recursos.</p>
+                }
+
+                @if (resourceTotalPages > 1) {
+                <div class="flex items-center justify-between mt-3 pt-3 border-t"
+                    style="border-color: #E5DEB0;">
+                    <app-secondary-button label="⟨ Anterior" variant="primary"
+                        [disabled]="resourcePage <= 1" (click)="previousPage()" />
+                    <span class="text-xs font-medium">
+                        {{ resourcePage }} / {{ resourceTotalPages }}
+                    </span>
+                    <app-secondary-button label="Siguiente ⟩" variant="primary"
+                        [disabled]="resourcePage >= resourceTotalPages" (click)="nextPage()" />
+                </div>
+                }
+
+                <button
+                    class="mt-3 w-full text-xs font-medium py-1.5 rounded-lg transition text-white"
+                    style="background-color: var(--color-resource-text);"
+                    (click)="cancel.emit()">
+                    + Añadir recurso externo
+                </button>
+            </div>
+
+            <!-- Status badge — right column, always last -->
+            <div class="md:col-start-3 order-5 rounded-xl p-4 bg-gray-100">
+                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full"
+                    [class.bg-green-200]="subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd"
+                    [class.text-green-800]="subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd"
+                    [class.bg-gray-200]="!subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd"
+                    [class.text-gray-600]="!subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd">
+                    {{ subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd ? 'Visto' : 'No visto' }}
+                </span>
+            </div>
+
+        </div>
+
+        @if (subtopicSlugs.length > 1) {
+        <div class="flex items-center justify-between pt-4 border-t border-border mt-5">
+            <app-secondary-button label="⟨ Anterior" variant="primary"
+                [disabled]="!hasPrevious" (click)="previous()" />
+            <span class="text-xs font-medium text-txt-secondary">
+                {{ currentIndex + 1 }} / {{ subtopicSlugs.length }}
+            </span>
+            <app-secondary-button label="Siguiente ⟩" variant="primary"
+                [disabled]="!hasNext" (click)="next()" />
+        </div>
+        }
+    </div>
+    } @else {
+    <p class="text-txt-secondary">No se pudo cargar el detalle del subtema.</p>
+    }
+</app-general-modal>

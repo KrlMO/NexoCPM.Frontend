@@ -8,6 +8,7 @@ export interface UserSyllabusDetailData {
     lastUnitName: string;
     status: 'IN_PROGRESS' | 'COMPLETED';
     units: UserSyllabusUnitData[];
+    fInalSyllabusTest?: AssessmentData;
 }
 
 export interface UserSyllabusUnitData {
@@ -16,6 +17,19 @@ export interface UserSyllabusUnitData {
     slug: string;
     status: 'IN_PROGRESS' | 'FINISHED' | 'COMPLETED';
     topics?: UserSyllabusTopicData[];
+    unitTest?: AssessmentData;
+}
+
+export interface AssessmentData {
+    status: 'NOT_STARTED' | 'APPROVED' | 'DISAPPROVED';
+    id?: number;
+    title?: string;
+    description?: string;
+    code?: string;
+    assessmentType?: 'KNOLEDGE' | 'GENERAL_SKILLS';
+    assessmentScope?: 'UNIT' | 'SYLLABUS' | 'SIMULATION';
+    targetId?: number;
+    subtopicId?: number;
 }
 
 export interface UserSyllabusTopicData {

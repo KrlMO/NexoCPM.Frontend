@@ -10,6 +10,7 @@ import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { ApiResponse } from '../../../../core/models/api-response.model';
 import { LoginResponse } from '../../models/auth-responses.model';
 import { LoginRequest } from '../../models/auth-requests.model';
+import { EncodingUtil } from '../../../../shared/utils/encoding.util';
 
 @Component({
   selector: 'app-login',
@@ -37,6 +38,15 @@ export class Login implements OnInit {
       }
       if (params.get('emailExists') === 'false') {
         this.toastService.warning('El correo electrónico no está registrado. Por favor, regístrate primero.');
+      }
+      if (params.get('successfullyVerified') === 'true') {
+        this.toastService.success('Cuenta verificada exitosamente. Por favor, inicia sesión.');
+      }
+
+      const email = params.get('email');
+      if (email) {
+        const decodedEmail = EncodingUtil.decodeEmail(email);
+        this.loginForm.patchValue({ email: decodedEmail });
       }
     });
   }

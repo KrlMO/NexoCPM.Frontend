@@ -1,4 +1,6 @@
+import { AssessmentData } from "./user-syllabus-detail.model";
 import { UserTopic } from "./user-topic.model";
+
 
 export interface UserSyllabusUnit{
     id: number;
@@ -11,4 +13,5 @@ export interface UserSyllabusUnit{
     lastViewed?: Date;
     status: 'IN_PROGRESS' | 'FINISHED' | 'COMPLETED';
     topics: UserTopic[];
+    test?: AssessmentData;
 }

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Card } from '../../../../shared/ui/card/card';
 import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/secondary-button';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
@@ -7,6 +7,7 @@ import { AuthFacade } from '../../state/auth-facade';
 import { EncodingUtil } from '../../../../shared/utils/encoding.util';
 import { ApiResponse } from '../../../../core/models/api-response.model';
 import { VerifyEmailVerificationResponse } from '../../models/auth-responses.model';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-verify-email',
@@ -19,13 +20,14 @@ import { VerifyEmailVerificationResponse } from '../../models/auth-responses.mod
   templateUrl: './verify-email.html',
   styleUrl: './verify-email.css',
 })
-export class VerifyEmail {
+export class VerifyEmail implements OnInit, OnDestroy {
   email: string = '';
   maskedEmail: string = '';
   resendIn: number = 0;
   isResendDisabled = true;
   remainingSeconds: number = 0;
 
+  private countdownSubscription: Subscription | null = null;
   private router = inject(Router);
 
   constructor(
@@ -52,6 +54,10 @@ export class VerifyEmail {
     });
   }
 
+  ngOnDestroy() {
+    this.countdownSubscription?.unsubscribe();
+  }
+
   loadStatus() {
     this.authFacadeService.getVerificationStatus(this.email)
       .subscribe((res: ApiResponse<VerifyEmailVerificationResponse>) => {
@@ -67,13 +73,33 @@ export class VerifyEmail {
           });
           return;
         }
-        this.isResendDisabled = res.data?.canResend === false;
 
-        this.resendIn = res.data?.timeToResendSeconds ?? 0;
+        const timeToResend = res.data?.timeToResendSeconds ?? 0;
+        this.remainingSeconds = timeToResend;
+        this.isResendDisabled = timeToResend > 0;
+        this.resendIn = timeToResend;
+
+        this.countdownSubscription?.unsubscribe();
+
+        if (timeToResend > 0) {
+          this.countdownSubscription = interval(1000).subscribe(() => {
+            if (this.remainingSeconds > 0) {
+              this.remainingSeconds--;
+              this.resendIn = this.remainingSeconds;
+
+              if (this.remainingSeconds === 0) {
+                this.isResendDisabled = false;
+                this.countdownSubscription?.unsubscribe();
+              }
+            }
+          });
+        }
       });
   }
 
   resendEmail() {
+    if (this.isResendDisabled) return;
+
     this.authFacadeService.resendVerification(this.email)
       .subscribe(() => {
         this.loadStatus();

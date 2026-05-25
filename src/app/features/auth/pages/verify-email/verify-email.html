@@ -16,7 +16,7 @@
         </div>
         <div class="mt-12 grid grid-cols-1 gap-4 justify-items-center">
             @if (isResendDisabled) {
-            <app-primary-button label="Reenviar en {{ resendIn }}s" type="button" [disabled]="true" />
+            <app-primary-button label="Reenviar en {{ remainingSeconds }}s" type="button" [disabled]="true" />
             }
             @else {
             <app-primary-button label="Reenviar correo electrónico" (click)="resendEmail()" />

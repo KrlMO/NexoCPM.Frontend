@@ -50,7 +50,7 @@ export class Navbar {
   }
 
   goPreparation() {
-    this.router.navigate(['/app/progress']);
+    this.router.navigate(['/app/my-progress']);
   }
 
   logout() {

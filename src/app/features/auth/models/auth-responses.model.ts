@@ -23,3 +23,8 @@ export interface VerifyEmailVerificationResponse {
   emailExists: boolean;
   canResend: boolean;
 }
+
+export interface ConfirmEmailResponse {
+  email: string;
+  emailConfirmed: boolean;
+}

@@ -14,7 +14,7 @@ import { ProgressBar } from '../../../../shared/ui/progress-bar/progress-bar';
 import { StarRating } from '../../../../shared/ui/star-rating/star-rating';
 import { GetDashboardResponse, GetFeaturedSyllabusResponse } from '../../models/app-responses.model';
 import { SyllabusDashboard } from '../../../curriculum/models/dashboard-syllabus.model';
-import { ConfirmModal } from '../../../../shared/ui/confirm-modal/confirm-modal';
+import { ConfirmModal } from '../../../../shared/ui/modal/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-home',

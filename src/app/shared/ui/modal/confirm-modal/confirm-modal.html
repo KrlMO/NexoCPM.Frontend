@@ -1,0 +1,11 @@
+<app-general-modal (cancel)="cancel.emit()">
+    <h3 class="text-xl font-bold text-txt-primary mb-2 pr-8">{{ title }}</h3>
+    <p class="text-txt-secondary mb-6">{{ message }}</p>
+    <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 [&>*]:w-full sm:[&>*]:flex-1">
+        <app-secondary-button [label]="cancelLabel" variant="primary" (click)="cancel.emit()" />
+        @if (secondaryLabel) {
+        <app-secondary-button [label]="secondaryLabel" variant="primary" (click)="secondary.emit()" />
+        }
+        <app-primary-button [label]="confirmLabel" [variant]="confirmVariant" (click)="confirm.emit()" />
+    </div>
+</app-general-modal>

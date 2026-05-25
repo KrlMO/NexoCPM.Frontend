@@ -13,6 +13,7 @@ import { UserSyllabus } from '../../../users/models/user-syllabus.model';
 import { PaginationParams } from '../../../../shared/models/pagination.model';
 import { GetMySyllabiResponse } from '../../../users/models/users-response.model';
 import { ApiResponse } from '../../../../core/models/api-response.model';
+import { AssessmentData } from '../../../users/models/user-syllabus-detail.model';
 
 @Component({
   selector: 'app-my-syllabi',
@@ -106,14 +107,35 @@ export class MySyllabi implements OnInit {
 
   continueSyllabus(syllabus: UserSyllabus) {
 
-    if (!syllabus.id) {
+    if (!syllabus.userLearningContextId) {
       this.toastService.error('No se encontró el contexto de aprendizaje.');
       return;
     }
-    this.router.navigate(['/app/my-syllabi', syllabus.id, syllabus.slug]);
+    this.router.navigate(['/app/my-syllabi', syllabus.userLearningContextId, syllabus.slug]);
   }
 
   goToSyllabi() {
     this.router.navigate(['/app/syllabi']);
+  }
+
+  getTestStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      NOT_STARTED: 'NO INICIADO',
+      APPROVED: 'APROBADO',
+      DISAPPROVED: 'DESAPROBADO',
+    };
+    return map[status] ?? 'NO INICIADO';
+  }
+
+  getTestButtonLabel(_status: string): string {
+    return 'Ver prueba';
+  }
+
+  goToTest(test: AssessmentData) {
+    if (test.code) {
+      this.router.navigate(['/app/test', test.code]);
+    } else {
+      this.toastService.info('Prueba no disponible próximamente.');
+    }
   }
 }

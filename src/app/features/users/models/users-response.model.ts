@@ -1,6 +1,7 @@
 import { PaginatedResult } from "../../../shared/models/pagination.model";
 import { UserSyllabus } from "./user-syllabus.model";
-import { UserSyllabusDetailData, UserSyllabusSubtopicData, UserSyllabusTopicData } from "./user-syllabus-detail.model";
+import { UserSyllabusDetailData, UserSyllabusSubtopicData, UserSyllabusTopicData, AssessmentData } from "./user-syllabus-detail.model";
+import { SubTopicDetail } from "./subtopic-detail.model";
 
 export interface HasCurrentSyllabusResponse {
     hasCurrent: boolean;
@@ -26,8 +27,13 @@ export interface GetUserSyllabusDetailResponse {
 
 export interface GetUnitTopicsResponse {
     topics: UserSyllabusTopicData[];
+    unitTest?: AssessmentData;
 }
 
 export interface GetTopicSubtopicsResponse {
     subTopics: UserSyllabusSubtopicData[];
+}
+
+export interface LoadSubtopicDetailResponse {
+    subTopicDetail: PaginatedResult<SubTopicDetail>;
 }

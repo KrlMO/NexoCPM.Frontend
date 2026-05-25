@@ -3,14 +3,17 @@ import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/api-response.model';
 import { PaginationParams } from '../../../shared/models/pagination.model';
+import { UserSyllabusSubtopicData } from '../models/user-syllabus-detail.model';
 import {
   GetMySyllabiResponse,
   GetTopicSubtopicsResponse,
   GetUnitTopicsResponse,
   GetUserSyllabusDetailResponse,
   HasCurrentSyllabusResponse,
+  LoadSubtopicDetailResponse,
   StartSyllabusResponse,
 } from '../models/users-response.model';
+import { UserSubTopic } from '../models/user-sub-topic.model';
 
 @Injectable({
   providedIn: 'root',
@@ -56,5 +59,9 @@ export class UsersService {
 
   public loadTopicSubtopics(learningContextId: number, topicId: number) {
     return this.http.get<ApiResponse<GetTopicSubtopicsResponse>>(`${this.apiUrl}/me/syllabus/${learningContextId}/topics/${topicId}/subtopics`);
+  }
+
+  public loadSubtopicDetail(learningContextId: number, subtopicSlug: string) {
+    return this.http.get<ApiResponse<LoadSubtopicDetailResponse>>(`${this.apiUrl}/me/syllabus/${learningContextId}/subtopics/${subtopicSlug}/details`);
   }
 }

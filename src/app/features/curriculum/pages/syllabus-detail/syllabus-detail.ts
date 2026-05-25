@@ -1,7 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
 import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/secondary-button';
 import { ProgressBar } from '../../../../shared/ui/progress-bar/progress-bar';
+import { SubtopicDetailModal } from '../../components/subtopic-detail-modal/subtopic-detail-modal';
 import { UsersService } from '../../../users/services/users.service';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import {
@@ -9,13 +11,14 @@ import {
   UserSyllabusUnitData,
   UserSyllabusTopicData,
   UserSyllabusSubtopicData,
+  AssessmentData,
 } from '../../../users/models/user-syllabus-detail.model';
 import { ApiResponse } from '../../../../core/models/api-response.model';
 import { GetUserSyllabusDetailResponse } from '../../../users/models/users-response.model';
 
 @Component({
   selector: 'app-syllabus-detail',
-  imports: [SecondaryButton, ProgressBar],
+  imports: [PrimaryButton, SecondaryButton, ProgressBar, SubtopicDetailModal],
   templateUrl: './syllabus-detail.html',
   styleUrl: './syllabus-detail.css',
 })
@@ -34,6 +37,8 @@ export class SyllabusDetail implements OnInit {
   expandedTopics = new Set<number>();
   loadingUnits = new Set<number>();
   loadingTopics = new Set<number>();
+  subtopicSlug: string | null = null;
+  currentSubtopicSlugs: string[] = [];
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -48,6 +53,10 @@ export class SyllabusDetail implements OnInit {
 
       this.learningContextId = Number(lcId);
       this.loadSyllabus(this.learningContextId, slug);
+    });
+
+    this.route.queryParams.subscribe(qp => {
+      this.subtopicSlug = qp['subtopic'] ?? null;
     });
   }
 
@@ -79,6 +88,7 @@ export class SyllabusDetail implements OnInit {
       this.usersService.loadUnitTopics(this.learningContextId, unit.id).subscribe({
         next: res => {
           unit.topics = res.data?.topics ?? [];
+          unit.unitTest = res.data?.unitTest;
           this.loadingUnits.delete(unit.id);
         },
         error: () => {
@@ -151,7 +161,39 @@ export class SyllabusDetail implements OnInit {
   }
 
   showSubtopicDetail(subtopic: UserSyllabusSubtopicData) {
-    this.toastService.info(`Detalles de este subtema" (próximamente).`);
+    this.currentSubtopicSlugs = [];
+    for (const unit of this.syllabus?.units ?? []) {
+      for (const topic of unit.topics ?? []) {
+        const match = topic.subTopics?.find(s => s.slug === subtopic.slug);
+        if (match) {
+          this.currentSubtopicSlugs = topic.subTopics!.map(s => s.slug);
+          break;
+        }
+      }
+      if (this.currentSubtopicSlugs.length) break;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { subtopic: subtopic.slug },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onNavigateSubtopic(slug: string) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { subtopic: slug },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  closeSubtopicDetail() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { subtopic: null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   retry() {
@@ -167,5 +209,40 @@ export class SyllabusDetail implements OnInit {
 
   goBack() {
     this.router.navigate(['/app/my-syllabi']);
+  }
+
+  getTestStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      NOT_STARTED: 'NO INICIADO',
+      APPROVED: 'APROBADO',
+      DISAPPROVED: 'DESAPROBADO',
+    };
+    return map[status] ?? 'NO INICIADO';
+  }
+
+  getTestBadgeClass(status: string): string {
+    const map: Record<string, string> = {
+      NOT_STARTED: 'badge-gray',
+      APPROVED: 'badge-green',
+      DISAPPROVED: 'badge-red',
+    };
+    return map[status] ?? 'badge-gray';
+  }
+
+  getTestButtonLabel(status: string): string {
+    const map: Record<string, string> = {
+      NOT_STARTED: 'Iniciar prueba',
+      APPROVED: 'Ver resultados',
+      DISAPPROVED: 'Reintentar',
+    };
+    return map[status] ?? 'Iniciar prueba';
+  }
+
+  goToTest(test: AssessmentData) {
+    if (test.code) {
+      this.router.navigate(['/app/test', test.code]);
+    } else {
+      this.toastService.info('Prueba no disponible próximamente.');
+    }
   }
 }
