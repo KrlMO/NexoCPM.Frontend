@@ -118,22 +118,8 @@ export class Home implements OnInit {
       this.router.navigate(['/auth/login']);
       return;
     }
-
-    this.pendingSyllabusSlug = syllabus.slug ?? syllabus.code;
-    this.pendingSyllabusName = syllabus.name;
-    this.usersService.hasCurrentSyllabus(this.pendingSyllabusSlug).subscribe({
-      next: (res: ApiResponse<HasCurrentSyllabusResponse>) => {
-        if (res.success && res.data?.hasCurrent) {
-          this.existingContextId = res.data.userLearningContextId;
-          this.modalMode = 'alreadyStarted';
-        } else {
-          this.modalMode = 'confirm';
-        }
-      },
-      error: () => {
-        this.modalMode = 'confirm';
-      }
-    });
+    this.router.navigate(['/app/my-syllabi', syllabus.userLearningContextId, syllabus.slug]);
+    return;
   }
 
   public confirmStart() {
@@ -143,12 +129,18 @@ export class Home implements OnInit {
     this.usersService.startSyllabus(this.pendingSyllabusSlug).subscribe({
       next: (res: ApiResponse<StartSyllabusResponse>) => {
         this.isStarting = false;
-        if (res.success) {
+        if (res.success && res.data?.userSyllabus) {
+          const userSyllabus = res.data.userSyllabus;
+          const learningContextId = res.data.userLearningContextId ?? userSyllabus.userLearningContextId;
           this.toastService.success(`Temario "${this.pendingSyllabusName}" iniciado correctamente.`);
+          if (learningContextId) {
+            this.router.navigate(['/app/my-syllabi', learningContextId, userSyllabus.slug]);
+          }
         }
         this.pendingSyllabusSlug = '';
         this.pendingSyllabusName = '';
         this.existingContextId = undefined;
+
       },
       error: () => {
         this.isStarting = false;

@@ -65,7 +65,14 @@ export class SyllabusDetail implements OnInit {
     this.error = false;
     this.usersService.loadSyllabus(learningContextId, slug).subscribe({
       next: (res: ApiResponse<GetUserSyllabusDetailResponse>) => {
-        this.syllabus = res.data?.userSyllabus ?? null;
+        if (res.data?.userSyllabus) {
+          this.syllabus = {
+            ...res.data.userSyllabus,
+            finalSyllabusTest: res.data.finalSyllabusTest,
+          };
+        } else {
+          this.syllabus = null;
+        }
         this.isLoading = false;
       },
       error: () => {

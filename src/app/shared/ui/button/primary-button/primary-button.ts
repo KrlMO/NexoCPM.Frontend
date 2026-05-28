@@ -17,7 +17,7 @@ export class PrimaryButton {
   }
 
   get classes(): string {
-    const base = 'rounded-lg px-8 py-2.5 border focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all text-center leading-tight';
+    const base = 'rounded-lg px-4 md:px-8 py-2 md:py-2.5 border focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all text-center leading-tight text-xs md:text-sm';
 
     const variants = {
       primary: 'bg-primary text-white hover:bg-primary-dark focus:ring-blue-500',

@@ -136,7 +136,7 @@
             </div>
             }
 
-            @if (syllabus.fInalSyllabusTest) {
+            @if (syllabus.finalSyllabusTest) {
             <div class="bg-surface border border-border rounded-lg overflow-hidden">
                 <div class="px-4 py-4">
                     <div class="flex items-center gap-3">
@@ -145,16 +145,16 @@
                             <p class="text-sm text-txt-secondary mt-0.5">Evalúa todos los conocimientos del temario.</p>
                         </div>
                         <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"
-                            [class.bg-green-100]="syllabus.fInalSyllabusTest.status === 'APPROVED'"
-                            [class.text-green-700]="syllabus.fInalSyllabusTest.status === 'APPROVED'"
-                            [class.bg-red-100]="syllabus.fInalSyllabusTest.status === 'DISAPPROVED'"
-                            [class.text-red-700]="syllabus.fInalSyllabusTest.status === 'DISAPPROVED'"
-                            [class.bg-gray-100]="syllabus.fInalSyllabusTest.status === 'NOT_STARTED'"
-                            [class.text-gray-600]="syllabus.fInalSyllabusTest.status === 'NOT_STARTED'">
-                            {{ getTestStatusLabel(syllabus.fInalSyllabusTest.status) }}
+                            [class.bg-green-100]="syllabus.finalSyllabusTest.status === 'APPROVED'"
+                            [class.text-green-700]="syllabus.finalSyllabusTest.status === 'APPROVED'"
+                            [class.bg-red-100]="syllabus.finalSyllabusTest.status === 'DISAPPROVED'"
+                            [class.text-red-700]="syllabus.finalSyllabusTest.status === 'DISAPPROVED'"
+                            [class.bg-gray-100]="syllabus.finalSyllabusTest.status === 'NOT_STARTED'"
+                            [class.text-gray-600]="syllabus.finalSyllabusTest.status === 'NOT_STARTED'">
+                            {{ getTestStatusLabel(syllabus.finalSyllabusTest.status) }}
                         </span>
-                        <app-primary-button [label]="getTestButtonLabel(syllabus.fInalSyllabusTest.status)"
-                            (click)="goToTest(syllabus.fInalSyllabusTest!)" />
+                        <app-primary-button [label]="getTestButtonLabel(syllabus.finalSyllabusTest.status)"
+                            (click)="goToTest(syllabus.finalSyllabusTest!)" />
                     </div>
                 </div>
             </div>

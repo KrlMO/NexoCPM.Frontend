@@ -1,1 +1,126 @@
-<p>profile works!</p>
+@if (loading) {
+<div class="flex items-center justify-center h-64">
+    <p class="text-muted-foreground">Cargando perfil...</p>
+</div>
+} @else {
+<div class="flex flex-col gap-6 md:max-w-[90%] mx-auto">
+    <app-card>
+        <div class="flex flex-col gap-6 md:max-w-[80%] mx-auto">
+            <app-card>
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary overflow-hidden">
+                        @if (profileForm.value.avatarUrl) {
+                        <img [src]="profileForm.value.avatarUrl" alt="Avatar" class="w-full h-full object-cover" />
+                        } @else {
+                        {{ profileForm.value.firstName?.[0] }}{{ profileForm.value.lastName?.[0] }}
+                        }
+                    </div>
+                    <div>
+                        <h2 class="text-base md:text-xl font-semibold">{{ profileForm.value.firstName }} {{
+                            profileForm.value.lastName }}</h2>
+                            <p class="text-xs md:text-sm text-muted-foreground">{{ profileForm.value.code }}</p>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Datos Generales</h3>
+                <div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <app-main-input label="Nombres" [control]="profileForm.controls.firstName" />
+                        <app-main-input label="Apellidos" [control]="profileForm.controls.lastName" />
+                        <app-main-input label="Nombre de usuario" [control]="profileForm.controls.userName" />
+                        <app-main-input label="Correo Electrónico" [control]="profileForm.controls.email" />
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <app-primary-button label="Cambiar correo electrónico" variant="secondary"
+                            (click)="notifyInfo('Función en desarrollo')" />
+                        <app-primary-button label="Cambiar contraseña" variant="secondary"
+                            (click)="notifyInfo('Función en desarrollo')" />
+                    </div>
+                    <div class="flex gap-3 mt-6 justify-end">
+                        @if (generalEditing) {
+                        <app-secondary-button label="Cancelar" (click)="disableGeneralEdit()" />
+                        <app-primary-button label="Guardar" type="submit" (click)="saveGeneral()" />
+                        } @else {
+                        <app-primary-button label="Editar" (click)="enableGeneralEdit()" />
+                        }
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Datos Extra</h3>
+                <div>
+                    <app-textarea-input label="Biografía" [control]="profileForm.controls.bio"
+                        placeholder="Cuéntanos sobre ti..." [rows]="5" />
+                    <app-main-input label="LinkedIn" [control]="profileForm.controls.linkedInProfile"
+                        placeholder="https://linkedin.com/in/tu-perfil" />
+                    <div class="flex gap-3 mt-6 justify-end">
+                        @if (extraEditing) {
+                        <app-secondary-button label="Cancelar" (click)="disableExtraEdit()" />
+                        <app-primary-button label="Guardar" (click)="saveExtra()" />
+                        } @else {
+                        <app-primary-button label="Editar" (click)="enableExtraEdit()" />
+                        }
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Datos privados</h3>
+                <div>
+                    <app-main-input label="Fecha de nacimiento" type="date"
+                        [control]="profileForm.controls.dateOfBirth" />
+                    <app-main-input label="Número de celular" [control]="profileForm.controls.phoneNumber"
+                        placeholder="+51 999 999 999" />
+                    <div class="flex gap-3 mt-6 justify-end">
+                        @if (privateEditing) {
+                        <app-secondary-button label="Cancelar" (click)="disablePrivateEdit()" />
+                        <app-primary-button label="Guardar" (click)="savePrivate()" />
+                        } @else {
+                        <app-primary-button label="Editar" (click)="enablePrivateEdit()" />
+                        }
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Configuración de privacidad</h3>
+                <div>
+                    <p class="text-sm text-muted-foreground mb-3">Información de la cuenta</p>
+                    <fieldset class="flex flex-col gap-2" [disabled]="!privacyEditing">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="radio" name="isPublic" [value]="true"
+                                [formControl]="profileForm.controls.isPublic" class="w-4 h-4 text-primary" />
+                            <span class="text-sm">Pública — tu perfil e información será visible para otros
+                                usuarios</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="radio" name="isPublic" [value]="false"
+                                [formControl]="profileForm.controls.isPublic" class="w-4 h-4 text-primary" />
+                            <span class="text-sm">Privada — solo tú podrás ver tu perfil</span>
+                        </label>
+                    </fieldset>
+                    <div class="flex gap-3 mt-6 justify-end">
+                        @if (privacyEditing) {
+                        <app-secondary-button label="Cancelar" (click)="disablePrivacyEdit()" />
+                        <app-primary-button label="Guardar" (click)="savePrivacy()" />
+                        } @else {
+                        <app-primary-button label="Editar" (click)="enablePrivacyEdit()" />
+                        }
+                    </div>
+                </div>
+            </app-card>
+
+            <div class="flex gap-4 justify-center">
+                <app-secondary-button label="DESACTIVAR MI CUENTA" variant="danger"
+                    (click)="notifyInfo('Función en desarrollo')" />
+                <app-primary-button label="ELIMINAR MI CUENTA" variant="danger"
+                    (click)="notifyInfo('Función en desarrollo')" />
+            </div>
+        </div>
+    </app-card>
+</div>
+}

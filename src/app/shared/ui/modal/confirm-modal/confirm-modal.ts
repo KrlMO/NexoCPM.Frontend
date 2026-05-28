@@ -16,6 +16,7 @@ export class ConfirmModal {
   @Input() cancelLabel = 'Cancelar';
   @Input() secondaryLabel: string | undefined = undefined;
   @Input() confirmVariant: 'primary' | 'danger' | 'pink' = 'primary';
+  @Input() containerClass = '';
 
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();

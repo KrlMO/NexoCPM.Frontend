@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ElementRef, HostListener } from '@angular/core';
 import { Auth } from '../../../features/auth/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { PrimaryButton } from '../../../shared/ui/button/primary-button/primary-button';
+import { Star } from '../../../shared/ui/star/star';
 
 
 @Component({
@@ -11,7 +12,8 @@ import { PrimaryButton } from '../../../shared/ui/button/primary-button/primary-
     AsyncPipe,
     RouterLink,
     CommonModule,
-    PrimaryButton
+    PrimaryButton,
+    Star
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
@@ -19,11 +21,19 @@ import { PrimaryButton } from '../../../shared/ui/button/primary-button/primary-
 export class Navbar {
   private router = inject(Router);
   private auth = inject(Auth);
+  private elementRef = inject(ElementRef);
 
   user$ = this.auth.getUser();
 
   menuOpen = false;
   userMenuOpen = false;
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.userMenuOpen = false;
+    }
+  }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -46,14 +56,17 @@ export class Navbar {
   }
 
   goProfile() {
-    this.router.navigate(['/app/profile']);
+    this.userMenuOpen = false;
+    this.router.navigate(['/app/me']);
   }
 
   goPreparation() {
+    this.userMenuOpen = false;
     this.router.navigate(['/app/my-progress']);
   }
 
   logout() {
+    this.userMenuOpen = false;
     this.auth.logout().subscribe(() => {
       this.router.navigate(['/']);
     });

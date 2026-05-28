@@ -6,4 +6,5 @@ export interface AuthUser {
   lastName: string;
   userName: string;
   userRole: string;
+  starRating: number;
 }

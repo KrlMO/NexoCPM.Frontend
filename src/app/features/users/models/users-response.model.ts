@@ -23,6 +23,7 @@ export interface GetMySyllabiResponse {
 
 export interface GetUserSyllabusDetailResponse {
     userSyllabus: UserSyllabusDetailData;
+    finalSyllabusTest?: AssessmentData;
 }
 
 export interface GetUnitTopicsResponse {

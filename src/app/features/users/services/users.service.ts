@@ -14,6 +14,8 @@ import {
   StartSyllabusResponse,
 } from '../models/users-response.model';
 import { UserSubTopic } from '../models/user-sub-topic.model';
+import { MainDashboardResponse, UnitDetailsResponse } from '../models/dashboard.models';
+import { GetMeResponse } from '../models/profile.model';
 
 @Injectable({
   providedIn: 'root',
@@ -63,5 +65,17 @@ export class UsersService {
 
   public loadSubtopicDetail(learningContextId: number, subtopicSlug: string) {
     return this.http.get<ApiResponse<LoadSubtopicDetailResponse>>(`${this.apiUrl}/me/syllabus/${learningContextId}/subtopics/${subtopicSlug}/details`);
+  }
+
+  public getMainDashboard() {
+    return this.http.get<ApiResponse<MainDashboardResponse>>(`${this.apiUrl}/me/main-dashboard`);
+  }
+
+  public getUnitDetails(userLearningContextId: number, syllabusSlug: string) {
+    return this.http.get<ApiResponse<UnitDetailsResponse>>(`${this.apiUrl}/me/main-dashboard/unit-details/${userLearningContextId}/${syllabusSlug}`);
+  }
+
+  public getMe() {
+    return this.http.get<ApiResponse<GetMeResponse>>(`${this.apiUrl}/me`);
   }
 }

@@ -6,4 +6,5 @@ export interface SyllabusDashboard {
     slug: string;
     completedPercentage: number;
     lastActivity: Date;
+    userLearningContextId: number;
 }

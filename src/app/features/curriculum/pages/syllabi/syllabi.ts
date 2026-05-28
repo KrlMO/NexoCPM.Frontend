@@ -180,9 +180,15 @@ export class Syllabi implements OnInit {
     this.usersService.startSyllabus(this.pendingSyllabusSlug).subscribe({
       next: (res: ApiResponse<StartSyllabusResponse>) => {
         this.isStarting = false;
-        if (res.success) {
-          this.toastService.success(`Temario "${this.pendingSyllabusName}" iniciado correctamente.`);
+        if (res.success && res.data?.userSyllabus) {
+          const userSyllabus = res.data.userSyllabus;
+          const learningContextId = res.data.userLearningContextId ?? userSyllabus.userLearningContextId;
+          if (learningContextId) {
+            this.toastService.success(`Temario "${this.pendingSyllabusName}" iniciado correctamente.`);
+            this.router.navigate(['/app/my-syllabi', learningContextId, userSyllabus.slug]);
+          }
         }
+        
         this.pendingSyllabusSlug = '';
         this.pendingSyllabusName = '';
         this.existingContextId = undefined;
@@ -198,8 +204,8 @@ export class Syllabi implements OnInit {
   }
 
   public goToExistingSyllabus() {
+    this.router.navigate(['/app/my-syllabi', this.existingContextId, this.pendingSyllabusSlug]);
     this.modalMode = 'none';
-    this.toastService.info(`Redirigiendo al temario "${this.pendingSyllabusName}"...`);
     this.pendingSyllabusSlug = '';
     this.pendingSyllabusName = '';
     this.existingContextId = undefined;

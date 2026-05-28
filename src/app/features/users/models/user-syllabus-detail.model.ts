@@ -8,7 +8,7 @@ export interface UserSyllabusDetailData {
     lastUnitName: string;
     status: 'IN_PROGRESS' | 'COMPLETED';
     units: UserSyllabusUnitData[];
-    fInalSyllabusTest?: AssessmentData;
+    finalSyllabusTest?: AssessmentData;
 }
 
 export interface UserSyllabusUnitData {

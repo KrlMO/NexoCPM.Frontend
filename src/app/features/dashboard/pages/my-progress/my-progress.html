@@ -1,13 +1,166 @@
-<app-card>
-    <H2>Panel de Preparación</H2>
-    <p>Aquí podrás gestionar tus preparaciones, ver tu progreso y acceder a tus temarios.</p>
-    <div>
-        <app-card>
-            <H3>Mis Temarios</H3>
-            <app-primary-button [label]="'Mis temarios'" (click)="goToMySyllabi()"/>
-        </app-card>
-    </div>
-    <section>
-        //Dashboard
+<div class="bg-background min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+
+    <!-- Header + Go to My Syllabi -->
+    <section class="mb-8">
+      <app-card>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-txt-primary">Panel de Preparaci&oacute;n</h1>
+            <p class="text-sm text-txt-secondary mt-1">
+              Gestiona tus preparaciones, revisa tu progreso y accede a tus temarios.
+            </p>
+          </div>
+          <app-primary-button label="Ir a mis temarios" (click)="goToMySyllabi()" />
+        </div>
+      </app-card>
     </section>
-</app-card>
+
+    <!-- Stats Grid -->
+    @if (mainDashboard) {
+    <section class="mb-8">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div
+          class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow"
+        >
+          <p class="text-3xl md:text-4xl font-bold text-primary">
+            {{ mainDashboard.statGridData.progressPercentage }}%
+          </p>
+          <p class="text-sm text-txt-secondary mt-1.5 font-medium">Progreso general</p>
+        </div>
+        <div
+          class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow"
+        >
+          <p class="text-3xl md:text-4xl font-bold text-secondary">
+            {{ mainDashboard.statGridData.totalTests }}
+          </p>
+          <p class="text-sm text-txt-secondary mt-1.5 font-medium">Pruebas realizadas</p>
+        </div>
+        <div
+          class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow"
+        >
+          <p class="text-3xl md:text-4xl font-bold text-primary">
+            {{ mainDashboard.statGridData.ranking ?? '--' }}
+          </p>
+          <p class="text-sm text-txt-secondary mt-1.5 font-medium">Ranking general</p>
+        </div>
+        <div
+          class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow"
+        >
+          <p class="text-3xl md:text-4xl font-bold text-yellow-500">
+            {{ mainDashboard.statGridData.totalStars }}
+          </p>
+          <p class="text-sm text-txt-secondary mt-1.5 font-medium">Estrellas</p>
+        </div>
+        <div
+          class="bg-surface border border-border rounded-xl shadow-sm p-5 md:p-6 text-center hover:shadow-md transition-shadow"
+        >
+          <p class="text-3xl md:text-4xl font-bold text-primary-pink">
+            {{ mainDashboard.statGridData.totalSimulations }}
+          </p>
+          <p class="text-sm text-txt-secondary mt-1.5 font-medium">Simulacros</p>
+        </div>
+      </div>
+    </section>
+    }
+
+    <!-- Syllabi Progress List -->
+    @if (mainDashboard?.syllabiProgress?.length) {
+    <section class="mb-8">
+      <app-card>
+        <h2 class="text-lg font-semibold text-txt-primary mb-5">Progreso de Temarios</h2>
+        <div class="space-y-3">
+          @for (syllabus of mainDashboard!.syllabiProgress; track syllabus.syllabusSlug) {
+          <div
+            class="rounded-lg p-4 cursor-pointer transition-all duration-200 border"
+            [class.bg-primary/5]="selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
+            [class.bg-surface]="selectedSyllabus?.syllabusSlug !== syllabus.syllabusSlug"
+            [class.border-primary]="selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
+            [class.border-border]="selectedSyllabus?.syllabusSlug !== syllabus.syllabusSlug"
+            [class.shadow-md]="selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
+            (click)="selectSyllabus(syllabus)"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-medium text-sm text-txt-primary">{{ syllabus.syllabusName }}</span>
+              <span class="text-sm font-semibold text-txt-primary">{{ syllabus.completedPercentage }}%</span>
+            </div>
+            <app-progress-bar
+              [percentage]="syllabus.completedPercentage"
+              color="#5100B4"
+            />
+          </div>
+          }
+        </div>
+      </app-card>
+    </section>
+    }
+
+    <!-- Unit Details + Recommendations -->
+    @if (selectedSyllabus) {
+    <section class="mb-8">
+      @if (isLoadingDetails) {
+      <div class="text-center py-12 text-txt-secondary text-sm">Cargando detalles...</div>
+      }
+      @if (unitDetails) {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Unit Performance -->
+        <app-card [fullHeight]="true" class="lg:col-span-2">
+          <h3 class="text-lg font-semibold text-txt-primary mb-5">
+            Rendimiento por unidades: {{ selectedSyllabus.syllabusName }}
+          </h3>
+          @if (unitDetails.units.length) {
+          <div class="space-y-4">
+            @for (unit of unitDetails.units; track unit.unitId) {
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-sm font-medium text-txt-primary">{{ unit.unitName }}</span>
+              </div>
+              <app-progress-bar
+                [percentage]="unit.completedPercentage"
+                color="#2597C8"
+              />
+            </div>
+            }
+          </div>
+          } @else {
+          <p class="text-sm text-txt-secondary">No hay unidades disponibles.</p>
+          }
+        </app-card>
+
+        <!-- Recommendations -->
+        <app-card [fullHeight]="true">
+          <h3 class="text-lg font-semibold text-txt-primary mb-5">Recomendaciones</h3>
+          @if (unitDetails.recommendations.length) {
+          <ul class="space-y-3">
+            @for (rec of unitDetails.recommendations; track rec.subtopicSlug) {
+            <li class="flex items-start gap-2 text-sm text-txt-primary">
+              <span
+                class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"
+              ></span>
+              <span>{{ rec.message }}</span>
+            </li>
+            }
+          </ul>
+          } @else {
+          <p class="text-sm text-txt-secondary">No hay recomendaciones disponibles.</p>
+          }
+        </app-card>
+      </div>
+      }
+    </section>
+    }
+
+    <!-- Line Chart: Last 5 Simulations -->
+    @if (chartLabels.length) {
+    <section class="mb-8">
+      <app-card>
+        <h3 class="text-lg font-semibold text-txt-primary mb-5">
+          Rendimiento en los &uacute;ltimos 5 simulacros
+        </h3>
+        <app-line-chart [labels]="chartLabels" [values]="chartValues" />
+      </app-card>
+    </section>
+    }
+
+  </div>
+</div>

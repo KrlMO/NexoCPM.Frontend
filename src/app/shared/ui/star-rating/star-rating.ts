@@ -1,8 +1,9 @@
 import { Component, input, computed } from '@angular/core';
+import { Star } from '../star/star';
 
 @Component({
   selector: 'app-star-rating',
-  imports: [],
+  imports: [Star],
   templateUrl: './star-rating.html',
   styleUrl: './star-rating.css',
 })
