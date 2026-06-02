@@ -115,15 +115,25 @@
                 </button>
             </div>
 
-            <!-- Status badge — right column, always last -->
-            <div class="md:col-start-3 order-5 rounded-xl p-4 bg-gray-100">
-                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full"
-                    [class.bg-green-200]="subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd"
-                    [class.text-green-800]="subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd"
-                    [class.bg-gray-200]="!subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd"
-                    [class.text-gray-600]="!subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd">
-                    {{ subtopicDetail()?.subTopicDetail?.items?.[0]?.viewd ? 'Visto' : 'No visto' }}
+            <!-- Completion toggle — right column, always last -->
+            <div class="md:col-start-3 order-5 rounded-xl p-4 bg-gray-100 flex flex-col items-center gap-3">
+              @if (toggling()) {
+                <span class="text-xs text-gray-500 animate-pulse">Actualizando...</span>
+              } @else if (completed) {
+                <span class="flex items-center gap-1.5 text-green-700 font-semibold text-sm">
+                  ✓ Completado
                 </span>
+                <button (click)="toggleCompletion()"
+                  class="text-xs text-gray-500 hover:text-gray-700 underline underline-offset-2 transition-colors">
+                  Desmarcar como completado
+                </button>
+              } @else {
+                <button (click)="toggleCompletion()"
+                  class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:opacity-85 active:opacity-70"
+                  style="background-color: var(--color-competence-text, #2E7D32);">
+                  ✓ Marcar como completado
+                </button>
+              }
             </div>
 
         </div>

@@ -52,7 +52,7 @@ export class Home implements OnInit {
   public lastModalityName: string = '';
   public lastLevelName: string = ''
   public lastSpecialityName: string = '';
-  
+
   ngOnInit() {
     this.appService.getUserDashboard().subscribe({
       next: (res: ApiResponse<GetDashboardResponse>) => {
@@ -118,6 +118,31 @@ export class Home implements OnInit {
       this.router.navigate(['/auth/login']);
       return;
     }
+    this.pendingSyllabusSlug = syllabus.slug;
+    this.pendingSyllabusName = syllabus.name;
+
+    this.usersService.hasCurrentSyllabus(syllabus.slug).subscribe({
+      next: (res: ApiResponse<HasCurrentSyllabusResponse>) => {
+        if (res.success && res.data?.hasCurrent) {
+          debugger
+          this.existingContextId = res.data.userLearningContextId;
+          this.modalMode = 'alreadyStarted';
+        } else {
+          this.modalMode = 'confirm';
+        }
+      },
+      error: () => {
+        this.modalMode = 'confirm';
+      }
+    });
+
+  }
+
+  public continueSyllabus(syllabus: SyllabusDashboard) {
+    if (!this.auth.isAuthenticated()) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
     this.router.navigate(['/app/my-syllabi', syllabus.userLearningContextId, syllabus.slug]);
     return;
   }
@@ -130,6 +155,7 @@ export class Home implements OnInit {
       next: (res: ApiResponse<StartSyllabusResponse>) => {
         this.isStarting = false;
         if (res.success && res.data?.userSyllabus) {
+          debugger
           const userSyllabus = res.data.userSyllabus;
           const learningContextId = res.data.userLearningContextId ?? userSyllabus.userLearningContextId;
           this.toastService.success(`Temario "${this.pendingSyllabusName}" iniciado correctamente.`);

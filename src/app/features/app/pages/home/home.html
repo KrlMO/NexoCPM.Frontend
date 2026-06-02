@@ -36,7 +36,7 @@
                         </div>
                     </div>
                     <div class="w-full lg:w-auto shrink-0">
-                        <app-primary-button label="Continuar desde lo dejaste" variant="pink" class="w-full lg:w-auto" (click)="startSyllabus(userDashboard?.lastSyllabus!)" />
+                        <app-primary-button label="Continuar desde donde lo dejaste" variant="pink" class="w-full lg:w-auto" (click)="continueSyllabus(userDashboard?.lastSyllabus!)" />
                     </div>
                 </div>
             </app-card>
@@ -124,7 +124,7 @@
                             }
                         </div>
                         <div class="mt-auto">
-                            <app-secondary-button label="Continuar" variant="primary" (click)="startSyllabus(syllabus)" />
+                            <app-secondary-button label="Continuar" variant="primary" (click)="continueSyllabus(syllabus)" />
                         </div>
                     </div>
                 </app-card>

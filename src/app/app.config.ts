@@ -6,6 +6,7 @@ import { API_URL } from './core/config/api.config';
 import { authInterceptor } from './core/interceptors/auth-interceptor';
 import { Auth } from './features/auth/services/auth.service';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
-    { provide: API_URL, useValue: 'https://localhost:7019/api' },
+    { provide: API_URL, useValue: environment.apiUrl },
     {
       provide: APP_INITIALIZER,
       useFactory: (auth: Auth) => () => auth.initAuth().toPromise(),

@@ -17,6 +17,9 @@
                     [control]="emailControl" />
                 <app-main-input label="Contraseña" placeholder="Ingresa tu contraseña" type="password"
                     [control]="passwordControl" />
+                <div class="text-right -mt-1">
+                    <a routerLink="/auth/forgot-password" class="text-sm text-primary font-semibold hover:underline">¿Olvidaste tu contraseña?</a>
+                </div>
             </div>
             <div class="flex justify-center mt-8">
                 <app-primary-button label="Iniciar sesión" type="submit" />

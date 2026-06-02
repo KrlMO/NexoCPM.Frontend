@@ -22,6 +22,14 @@ export const routes: Routes = [
             {
                 path: 'verify-account',
                 loadComponent: () => import('./features/auth/pages/verify-account/verify-account').then(m => m.VerifyAccount)
+            },
+            {
+                path: 'forgot-password',
+                loadComponent: () => import('./features/auth/pages/forgot-password/forgot-password').then(m => m.ForgotPassword)
+            },
+            {
+                path: 'reset-password',
+                loadComponent: () => import('./features/auth/pages/reset-password/reset-password').then(m => m.ResetPassword)
             }
         ]
     },
@@ -40,6 +48,16 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'users',
+        component: PublicLayout,
+        children: [
+            {
+                path: 'public-profile/:code',
+                loadComponent: () => import('./features/users/pages/public-profile/public-profile').then(m => m.PublicProfile)
+            }
+        ]
+    },
+    {
         path: 'app',
         component: PublicLayout,
         children: [
@@ -52,7 +70,7 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/curriculum/pages/syllabi/syllabi').then(m => m.Syllabi)
             },
             {
-                path:'me',
+                path: 'me',
                 loadComponent: () => import('./features/users/pages/profile/profile').then(m => m.Profile)
             },
             {
@@ -66,6 +84,23 @@ export const routes: Routes = [
             {
                 path: 'my-syllabi',
                 loadComponent: () => import('./features/curriculum/pages/my-syllabi/my-syllabi').then(m => m.MySyllabi)
+            },
+            {
+                path: 'evaluations',
+                children: [
+                    {
+                        path: "simulations",
+                        loadComponent: () => import('./features/evaluations/pages/simulation/simulation').then(m => m.Simulation)
+                    },
+                    {
+                        path: 'tests/:userLearningContextId/:code',
+                        loadComponent: () => import('./features/evaluations/pages/test/test').then(m => m.Test)
+                    }
+                ]
+            },
+            {
+                path: 'ranking',
+                loadComponent: () => import('./features/users/pages/leaderboard/leaderboard').then(m => m.Leaderboard)
             }
         ]
     },

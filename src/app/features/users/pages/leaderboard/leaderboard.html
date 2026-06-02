@@ -1,0 +1,73 @@
+<div class="bg-background min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+    <h1 class="text-2xl md:text-3xl font-bold text-txt-primary mb-8">
+      Ranking de Líderes
+    </h1>
+
+    @if (loading) {
+      <div class="flex justify-center py-16">
+        <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    } @else if (entries.length === 0) {
+      <app-card>
+        <p class="text-center text-gray-500 py-8">
+          No hay líderes disponibles en este momento.
+        </p>
+      </app-card>
+    } @else {
+      <app-card>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-border text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                <th class="py-3 px-2 w-16">#</th>
+                <th class="py-3 px-2">Usuario</th>
+                <th class="py-3 px-2 text-right w-28">Estrellas</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of entries; track entry.userId) {
+                <tr class="border-b border-border/50 hover:bg-gray-50 transition-colors">
+                  <td class="py-3 px-2">
+                    @if (entry.rank === 1) {
+                      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-700 font-bold text-sm">1</span>
+                    } @else if (entry.rank === 2) {
+                      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold text-sm">2</span>
+                    } @else if (entry.rank === 3) {
+                      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-700 font-bold text-sm">3</span>
+                    } @else {
+                      <span class="inline-flex items-center justify-center w-8 h-8 text-gray-400 font-semibold text-sm">{{ entry.rank }}</span>
+                    }
+                  </td>
+                  <td class="py-3 px-2">
+                    <div class="flex items-center gap-3">
+                      @if (entry.avatarUrl) {
+                        <img [src]="entry.avatarUrl" alt="" class="w-10 h-10 rounded-full object-cover" />
+                      } @else {
+                        <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+                          {{ getInitials(entry.firstName, entry.lastName) }}
+                        </div>
+                      }
+                      <div>
+                        <p class="font-medium text-txt-primary">
+                          {{ entry.firstName }} {{ entry.lastName }}
+                        </p>
+                        <p class="text-sm text-gray-500">&#64;{{ entry.userName }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3 px-2 text-right">
+                    <div class="inline-flex items-center gap-1.5">
+                      <app-star [filled]="true" sizeClass="w-5 h-5" filledColorClass="text-yellow-400" />
+                      <span class="font-bold text-txt-primary">{{ entry.totalStars }}</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    }
+  </div>
+</div>

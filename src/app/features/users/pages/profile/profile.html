@@ -19,7 +19,7 @@
                     <div>
                         <h2 class="text-base md:text-xl font-semibold">{{ profileForm.value.firstName }} {{
                             profileForm.value.lastName }}</h2>
-                            <p class="text-xs md:text-sm text-muted-foreground">{{ profileForm.value.code }}</p>
+                        <p class="text-xs md:text-sm text-muted-foreground">{{ profileForm.value.code }}</p>
                     </div>
                 </div>
             </app-card>
@@ -34,10 +34,12 @@
                         <app-main-input label="Correo Electrónico" [control]="profileForm.controls.email" />
                     </div>
                     <div class="flex gap-3 mt-4">
+                        <!--
                         <app-primary-button label="Cambiar correo electrónico" variant="secondary"
                             (click)="notifyInfo('Función en desarrollo')" />
+                        -->
                         <app-primary-button label="Cambiar contraseña" variant="secondary"
-                            (click)="notifyInfo('Función en desarrollo')" />
+                            (click)="openChangePasswordModal()" />
                     </div>
                     <div class="flex gap-3 mt-6 justify-end">
                         @if (generalEditing) {
@@ -115,12 +117,62 @@
             </app-card>
 
             <div class="flex gap-4 justify-center">
-                <app-secondary-button label="DESACTIVAR MI CUENTA" variant="danger"
-                    (click)="notifyInfo('Función en desarrollo')" />
-                <app-primary-button label="ELIMINAR MI CUENTA" variant="danger"
-                    (click)="notifyInfo('Función en desarrollo')" />
+                <app-secondary-button label="DESACTIVAR MI CUENTA" variant="danger" (click)="confirmDeactivate()" />
+                <app-primary-button label="ELIMINAR MI CUENTA" variant="danger" (click)="confirmDelete()" />
             </div>
         </div>
     </app-card>
 </div>
+}
+
+@if (showChangePasswordModal) {
+<app-general-modal (cancel)="closeChangePasswordModal()">
+    <div class="flex flex-col items-center">
+        <h3 class="text-xl font-bold text-txt-primary mb-4">Cambiar contraseña</h3>
+    </div>
+    <form [formGroup]="changePasswordForm" (ngSubmit)="onChangePassword()">
+        <div class="flex flex-col gap-4">
+            <app-main-input label="Contraseña actual" placeholder="Ingresa tu contraseña actual" type="password"
+                [control]="currentPasswordControl" />
+            <app-main-input label="Nueva contraseña" placeholder="Ingresa tu nueva contraseña" type="password"
+                [control]="newPasswordControl" />
+            <app-main-input label="Verificar nueva contraseña" placeholder="Vuelve a ingresar tu nueva contraseña"
+                type="password" [control]="confirmPasswordControl" />
+        </div>
+        <div class="flex justify-end gap-3 mt-6">
+            <app-secondary-button label="Cancelar" (click)="closeChangePasswordModal()" />
+            <app-primary-button label="Cambiar contraseña" type="submit" />
+        </div>
+    </form>
+</app-general-modal>
+}
+
+@if (showConfirmDeactivateModal) {
+<app-general-modal (cancel)="cancelAccountAction()">
+    <div class="flex flex-col items-center gap-4">
+        <h3 class="text-xl font-bold text-txt-primary">Desactivar cuenta</h3>
+        <p class="text-sm text-muted-foreground text-center">
+            ¿Estás seguro de que deseas desactivar tu cuenta? Podrás reactivarla después iniciando sesión nuevamente.
+        </p>
+        <div class="flex gap-3 mt-2">
+            <app-secondary-button label="Cancelar" (click)="cancelAccountAction()" />
+            <app-primary-button label="Desactivar" variant="danger" (click)="deactivateAccount()" />
+        </div>
+    </div>
+</app-general-modal>
+}
+
+@if (showConfirmDeleteModal) {
+<app-general-modal (cancel)="cancelAccountAction()">
+    <div class="flex flex-col items-center gap-4">
+        <h3 class="text-xl font-bold text-txt-primary">Eliminar cuenta</h3>
+        <p class="text-sm text-muted-foreground text-center">
+            ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.
+        </p>
+        <div class="flex gap-3 mt-2">
+            <app-secondary-button label="Cancelar" (click)="cancelAccountAction()" />
+            <app-primary-button label="Eliminar" variant="danger" (click)="deleteAccount()" />
+        </div>
+    </div>
+</app-general-modal>
 }

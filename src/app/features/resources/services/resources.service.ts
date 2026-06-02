@@ -16,6 +16,6 @@ export class ResourcesService {
       .set('subtopicId', subtopicId.toString())
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
-    return this.http.get<ApiResponse<GetResourcesBySubtopicResponse>>(`${this.apiUrl}/get`, { params });
+    return this.http.get<ApiResponse<GetResourcesBySubtopicResponse>>(`${this.apiUrl}`, { params });
   }
 }

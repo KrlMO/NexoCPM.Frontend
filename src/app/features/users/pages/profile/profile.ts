@@ -1,14 +1,31 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Card } from '../../../../shared/ui/card/card';
 import { MainInput } from '../../../../shared/ui/main-input/main-input';
 import { TextareaInput } from '../../../../shared/ui/textarea-input/textarea-input';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
 import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/secondary-button';
+import { GeneralModal } from '../../../../shared/ui/modal/general-modal/general-modal';
 import { UsersService } from '../../services/users.service';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
-import { GetMeResponse } from '../../models/profile.model';
+import { Auth } from '../../../auth/services/auth.service';
+import {
+  GetMeResponse,
+  UpdateGeneralUserDataRequest,
+  UpdateGeneralUserDataResponse,
+  UpdatePrivateUserDataRequest,
+  UpdatePrivateUserDataResponse,
+  UpdateExtraUserDataRequest,
+  UpdateExtraUserDataResponse,
+  UpdatePrivacyUserConfigurationRequest,
+  UpdatePrivacyUserConfigurationResponse,
+  DeactivateAccountResponse,
+  DeleteAccountResponse,
+} from '../../models/profile.model';
 import { ApiResponse } from '../../../../core/models/api-response.model';
+import { ChangePasswordRequest } from '../../../auth/models/auth-requests.model';
+import { ChangePasswordResponse } from '../../../auth/models/auth-responses.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -18,6 +35,7 @@ import { ApiResponse } from '../../../../core/models/api-response.model';
     TextareaInput,
     PrimaryButton,
     SecondaryButton,
+    GeneralModal,
     ReactiveFormsModule,
   ],
   templateUrl: './profile.html',
@@ -25,9 +43,12 @@ import { ApiResponse } from '../../../../core/models/api-response.model';
 })
 export class Profile implements OnInit {
   private usersService = inject(UsersService);
+  private authService = inject(Auth);
   private toast = inject(ToastService);
+  private router = inject(Router);
 
   loading = true;
+  showChangePasswordModal = false;
 
   generalEditing = false;
   extraEditing = false;
@@ -46,6 +67,12 @@ export class Profile implements OnInit {
     phoneNumber: new FormControl({ value: '', disabled: true }),
     isPublic: new FormControl({ value: true, disabled: true }),
     avatarUrl: new FormControl({ value: '', disabled: true }),
+  });
+
+  changePasswordForm = new FormGroup({
+    currentPassword: new FormControl('', [Validators.required]),
+    newPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
+    confirmPassword: new FormControl('', [Validators.required]),
   });
 
   ngOnInit(): void {
@@ -88,6 +115,10 @@ export class Profile implements OnInit {
     const d = new Date(date);
     if (isNaN(d.getTime())) return '';
     return d.toISOString().split('T')[0];
+  }
+
+  private toApiDate(date: string): string {
+    return date;
   }
 
   enableGeneralEdit(): void {
@@ -146,22 +177,182 @@ export class Profile implements OnInit {
   }
 
   saveGeneral(): void {
-    this.toast.info('Guardando datos generales...');
-    this.disableGeneralEdit();
+    const data: UpdateGeneralUserDataRequest = {
+      firstName: this.profileForm.value.firstName ?? undefined,
+      lastName: this.profileForm.value.lastName ?? undefined,
+      userName: this.profileForm.value.userName ?? undefined,
+    };
+
+    this.usersService.updateGeneralUserData(data).subscribe({
+      next: (res: ApiResponse<UpdateGeneralUserDataResponse>) => {
+        this.toast.success(res.message || 'Datos generales actualizados correctamente');
+        if (res.data) {
+          this.profileForm.patchValue({
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            userName: res.data.userName,
+          });
+        }
+        this.disableGeneralEdit();
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al actualizar datos generales');
+      },
+    });
   }
 
   saveExtra(): void {
-    this.toast.info('Guardando datos extra...');
-    this.disableExtraEdit();
+    const data: UpdateExtraUserDataRequest = {
+      bio: this.profileForm.value.bio ?? undefined,
+      linkedInUrl: this.profileForm.value.linkedInProfile ?? undefined,
+    };
+
+    this.usersService.updateExtraUserData(data).subscribe({
+      next: (res: ApiResponse<UpdateExtraUserDataResponse>) => {
+        this.toast.success(res.message || 'Datos extra actualizados correctamente');
+        if (res.data) {
+          this.profileForm.patchValue({
+            bio: res.data.bio ?? '',
+            linkedInProfile: res.data.linkedInProfile ?? '',
+          });
+        }
+        this.disableExtraEdit();
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al actualizar datos extra');
+      },
+    });
   }
 
   savePrivate(): void {
-    this.toast.info('Guardando datos privados...');
-    this.disablePrivateEdit();
+    const data: UpdatePrivateUserDataRequest = {
+      dateOfBirth: this.profileForm.value.dateOfBirth ? this.toApiDate(this.profileForm.value.dateOfBirth) : undefined,
+      phoneNumber: this.profileForm.value.phoneNumber ?? undefined,
+    };
+
+    this.usersService.updatePrivateUserData(data).subscribe({
+      next: (res: ApiResponse<UpdatePrivateUserDataResponse>) => {
+        this.toast.success(res.message || 'Datos privados actualizados correctamente');
+        if (res.data) {
+          this.profileForm.patchValue({
+            dateOfBirth: this.toDateInputValue(res.data.dateOfBirth),
+            phoneNumber: res.data.phoneNumber ?? '',
+          });
+        }
+        this.disablePrivateEdit();
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al actualizar datos privados');
+      },
+    });
   }
 
   savePrivacy(): void {
-    this.toast.info('Guardando configuración de privacidad...');
-    this.disablePrivacyEdit();
+    const data: UpdatePrivacyUserConfigurationRequest = {
+      isPublic: this.profileForm.value.isPublic ?? undefined,
+    };
+
+    this.usersService.updatePrivacyUserConfiguration(data).subscribe({
+      next: (res: ApiResponse<UpdatePrivacyUserConfigurationResponse>) => {
+        this.toast.success(res.message || 'Configuración de privacidad actualizada correctamente');
+        if (res.data) {
+          this.profileForm.patchValue({ isPublic: res.data.isPublic });
+        }
+        this.disablePrivacyEdit();
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al actualizar configuración de privacidad');
+      },
+    });
+  }
+
+  showConfirmDeactivateModal = false;
+  showConfirmDeleteModal = false;
+
+  confirmDeactivate(): void {
+    this.showConfirmDeactivateModal = true;
+  }
+
+  confirmDelete(): void {
+    this.showConfirmDeleteModal = true;
+  }
+
+  cancelAccountAction(): void {
+    this.showConfirmDeactivateModal = false;
+    this.showConfirmDeleteModal = false;
+  }
+
+  deactivateAccount(): void {
+    this.showConfirmDeactivateModal = false;
+    this.usersService.deactivateAccount().subscribe({
+      next: (res: ApiResponse<DeactivateAccountResponse>) => {
+        this.toast.success(res.data?.message || 'Cuenta desactivada correctamente');
+        this.authService.logout().subscribe();
+        this.router.navigate(['/auth/login']);
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al desactivar la cuenta');
+      },
+    });
+  }
+
+  deleteAccount(): void {
+    this.showConfirmDeleteModal = false;
+    this.usersService.deleteAccount().subscribe({
+      next: (res: ApiResponse<DeleteAccountResponse>) => {
+        this.toast.success(res.data?.message || 'Cuenta eliminada correctamente');
+        this.authService.logout().subscribe();
+        this.router.navigate(['/auth/login']);
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al eliminar la cuenta');
+      },
+    });
+  }
+
+  get currentPasswordControl() { return this.changePasswordForm.get('currentPassword') as FormControl; }
+  get newPasswordControl() { return this.changePasswordForm.get('newPassword') as FormControl; }
+  get confirmPasswordControl() { return this.changePasswordForm.get('confirmPassword') as FormControl; }
+
+  openChangePasswordModal(): void {
+    this.showChangePasswordModal = true;
+    this.changePasswordForm.reset();
+  }
+
+  closeChangePasswordModal(): void {
+    this.showChangePasswordModal = false;
+    this.changePasswordForm.reset();
+  }
+
+  onChangePassword(): void {
+    if (this.changePasswordForm.invalid) {
+      this.changePasswordForm.markAllAsTouched();
+      return;
+    }
+
+    const { currentPassword, newPassword, confirmPassword } = this.changePasswordForm.value;
+
+    if (newPassword !== confirmPassword) {
+      this.toast.error('Las contraseñas nuevas no coinciden.');
+      return;
+    }
+
+    const data: ChangePasswordRequest = {
+      currentPassword: currentPassword!,
+      newPassword: newPassword!,
+    };
+
+    this.usersService.changePassword(data).subscribe({
+      next: (res: ApiResponse<ChangePasswordResponse>) => {
+        this.toast.success(res.message || 'Contraseña cambiada exitosamente.');
+        this.closeChangePasswordModal();
+        this.authService.logout().subscribe();
+        this.router.navigate(['/auth/login']);
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || err.error?.Message || 'Error al cambiar la contraseña.';
+        this.toast.error(errorMessage);
+      },
+    });
   }
 }

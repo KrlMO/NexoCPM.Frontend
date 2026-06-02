@@ -6,5 +6,11 @@ export interface SubTopicDetail {
     subTopic: SubTopic;
     microTopics?: MicroTopic[];
     competence?: Competence;
-    viewd: boolean;
+    viewed: boolean;
+    isCompleted: boolean;
+    topicId: number;
+}
+
+export interface ToggleSubtopicCompletionResponse {
+    isCompleted: boolean;
 }

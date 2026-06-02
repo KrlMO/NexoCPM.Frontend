@@ -32,11 +32,36 @@ export class SubtopicDetailModal implements OnInit, OnChanges {
 
   subtopicDetail = signal<LoadSubtopicDetailResponse | null>(null);
   loading = signal(true);
+  toggling = signal(false);
 
   resources: Resource[] = [];
   resourcePage = 1;
   resourcePageSize = 4;
   resourceTotalPages = 0;
+
+  get completed(): boolean {
+    return this.subtopicDetail()?.subTopicDetail?.items?.[0]?.isCompleted ?? false;
+  }
+
+  toggleCompletion(): void {
+    const detail = this.subtopicDetail()?.subTopicDetail?.items?.[0];
+    if (!detail?.subTopic?.id) return;
+
+    this.toggling.set(true);
+    this.usersService.toggleSubtopicCompletion(this.learningContextId, detail.subTopic.id).subscribe({
+      next: (res) => {
+        const detail = this.subtopicDetail();
+        if (detail?.subTopicDetail?.items?.[0]) {
+          detail.subTopicDetail.items[0].isCompleted = res.data?.isCompleted ?? !this.completed;
+        }
+        this.toggling.set(false);
+      },
+      error: () => {
+        this.toastService.error('Error al actualizar el estado');
+        this.toggling.set(false);
+      },
+    });
+  }
 
   get currentIndex(): number {
     return this.subtopicSlugs.indexOf(this.slug);

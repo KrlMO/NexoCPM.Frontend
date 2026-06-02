@@ -28,3 +28,16 @@ export interface ConfirmEmailResponse {
   email: string;
   emailConfirmed: boolean;
 }
+
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ChangePasswordResponse {
+  message: string;
+}

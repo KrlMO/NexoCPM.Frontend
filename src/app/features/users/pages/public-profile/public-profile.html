@@ -1,1 +1,84 @@
-<p>public-profile works!</p>
+@if (loading) {
+<div class="flex items-center justify-center h-64">
+    <p class="text-muted-foreground">Cargando perfil...</p>
+</div>
+} @else if (notFound) {
+<div class="flex items-center justify-center h-64">
+    <p class="text-muted-foreground">Usuario no encontrado</p>
+</div>
+} @else if (isPrivate) {
+<div class="flex items-center justify-center h-64">
+    <p class="text-muted-foreground">Este perfil es privado</p>
+</div>
+} @else if (profile) {
+<div class="flex flex-col gap-6 md:max-w-[90%] mx-auto py-8">
+    <app-card>
+        <div class="flex flex-col gap-6 md:max-w-[80%] mx-auto">
+            <app-card>
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary overflow-hidden">
+                        @if (profile.avatarUrl) {
+                        <img [src]="profile.avatarUrl" alt="Avatar" class="w-full h-full object-cover" />
+                        } @else {
+                        {{ profile.firstName?.[0] }}{{ profile.lastName?.[0] }}
+                        }
+                    </div>
+                    <div>
+                        <h2 class="text-base md:text-xl font-semibold">{{ profile.firstName }} {{ profile.lastName }}</h2>
+                        <p class="text-xs md:text-sm text-muted-foreground">{{ profile.code }}</p>
+                        <div class="flex items-center gap-1 mt-1">
+                            <app-star [filled]="true" />
+                            <span class="text-xs md:text-sm text-muted-foreground">{{ profile.totalStars }} estrellas</span>
+                        </div>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Datos Generales</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-muted-foreground">Nombres</p>
+                        <p class="text-sm">{{ profile.firstName || '—' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-muted-foreground">Apellidos</p>
+                        <p class="text-sm">{{ profile.lastName || '—' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-muted-foreground">Nombre de usuario</p>
+                        <p class="text-sm">{{ profile.userName || '—' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-muted-foreground">Correo Electrónico</p>
+                        <p class="text-sm">{{ profile.email || '—' }}</p>
+                    </div>
+                </div>
+            </app-card>
+
+            @if (profile.bio || profile.linkedInProfile) {
+            <app-card>
+                <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Datos Extra</h3>
+                <div class="flex flex-col gap-4">
+                    @if (profile.bio) {
+                    <div>
+                        <p class="text-xs text-muted-foreground">Biografía</p>
+                        <p class="text-sm">{{ profile.bio }}</p>
+                    </div>
+                    }
+                    @if (profile.linkedInProfile) {
+                    <div>
+                        <p class="text-xs text-muted-foreground">LinkedIn</p>
+                        <a [href]="linkedInUrl" target="_blank" rel="noopener noreferrer" class="text-sm text-primary hover:underline">
+                            {{ profile.linkedInProfile }}
+                        </a>
+                    </div>
+                    }
+                </div>
+            </app-card>
+            }
+        </div>
+    </app-card>
+</div>
+}
