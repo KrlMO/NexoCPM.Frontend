@@ -246,10 +246,19 @@ export class SyllabusDetail implements OnInit {
   }
 
   goToTest(test: AssessmentData) {
-    if (test.code) {
-      this.router.navigate(['/app/test', test.code]);
-    } else {
-      this.toastService.info('Prueba no disponible próximamente.');
+    if (!this.syllabus?.slug) {
+      this.toastService.info('Prueba no disponible.');
+      return;
     }
+
+    const unit = this.syllabus.units.find(u => u.unitTest === test);
+    const unitSlug = unit?.slug;
+
+    this.router.navigate([
+      '/app/evaluations/tests',
+      this.learningContextId,
+      this.syllabus.slug,
+      ...(unitSlug ? [unitSlug] : []),
+    ]);
   }
 }

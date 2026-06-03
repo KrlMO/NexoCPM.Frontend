@@ -93,7 +93,11 @@ export const routes: Routes = [
                         loadComponent: () => import('./features/evaluations/pages/simulation/simulation').then(m => m.Simulation)
                     },
                     {
-                        path: 'tests/:userLearningContextId/:code',
+                        path: 'tests/:userLearningContextId/:syllabusSlug/:unitSlug',
+                        loadComponent: () => import('./features/evaluations/pages/test/test').then(m => m.Test)
+                    },
+                    {
+                        path: 'tests/:userLearningContextId/:syllabusSlug',
                         loadComponent: () => import('./features/evaluations/pages/test/test').then(m => m.Test)
                     }
                 ]

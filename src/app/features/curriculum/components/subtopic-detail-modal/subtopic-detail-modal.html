@@ -1,4 +1,4 @@
-<app-general-modal (cancel)="cancel.emit()" containerClass="max-w-4xl">
+<app-general-modal (cancel)="cancel.emit()" containerClass="max-w-5xl">
     @if (loading()) {
     <div class="flex items-center justify-center py-16">
         <p class="text-txt-secondary animate-pulse">Cargando detalle...</p>
@@ -9,10 +9,10 @@
             {{ subtopicDetail()?.subTopicDetail?.items?.[0]?.subTopic?.description ?? 'Detalle del subtema' }}
         </h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-5">
 
-            <!-- Microtemas — wider left, always first -->
-            <div class="md:col-span-2 order-1 rounded-xl p-4 bg-micro-bg text-micro-text">
+            <!-- Microtemas — left, always first -->
+            <div class="md:col-span-3 order-1 rounded-xl p-4 bg-micro-bg text-micro-text">
                 <h4 class="font-semibold mb-2 flex items-center gap-1.5">
                     Microtemas
                 </h4>
@@ -32,7 +32,7 @@
 
             <!-- Competencia — right column, second on mobile and desktop -->
             @if (subtopicDetail()?.subTopicDetail?.items?.[0]?.competence) {
-            <div class="order-2 rounded-xl p-4 bg-competence-bg text-competence-text">
+            <div class="md:col-span-2 order-2 rounded-xl p-4 bg-competence-bg text-competence-text">
                 <h4 class="font-semibold mb-2 flex items-center gap-1.5">
                     Competencia {{ competenceNumber }}
                 </h4>
@@ -58,7 +58,7 @@
 
             <!-- Niveles — right column, 3rd on mobile, 4th on desktop -->
             @if (subtopicDetail()?.subTopicDetail?.items?.[0]?.competence?.competenceLevels?.length) {
-            <div class="order-3 md:order-4 rounded-xl p-4 bg-level-bg text-level-text">
+            <div class="md:col-span-2 order-3 md:order-4 rounded-xl p-4 bg-level-bg text-level-text">
                 <h4 class="font-semibold mb-2 flex items-center gap-1.5">
                     Niveles del estudiante
                 </h4>
@@ -73,8 +73,8 @@
             </div>
             }
 
-            <!-- Recursos — wider left, 4th on mobile, 3rd on desktop -->
-            <div class="md:col-span-2 order-4 md:order-3 rounded-xl p-4 bg-resource-bg text-resource-text">
+            <!-- Recursos — left, 4th on mobile, 3rd on desktop -->
+            <div class="md:col-span-3 order-4 md:order-3 rounded-xl p-4 bg-resource-bg text-resource-text">
                 <h4 class="font-semibold mb-2 flex items-center gap-1.5">
                     Recursos de la comunidad
                 </h4>
@@ -116,12 +116,12 @@
             </div>
 
             <!-- Completion toggle — right column, always last -->
-            <div class="md:col-start-3 order-5 rounded-xl p-4 bg-gray-100 flex flex-col items-center gap-3">
+            <div class="md:col-start-4 md:col-span-2 order-5 rounded-xl p-4 bg-gray-100 flex flex-col items-center gap-3">
               @if (toggling()) {
                 <span class="text-xs text-gray-500 animate-pulse">Actualizando...</span>
               } @else if (completed) {
                 <span class="flex items-center gap-1.5 text-green-700 font-semibold text-sm">
-                  ✓ Completado
+                  Completado
                 </span>
                 <button (click)="toggleCompletion()"
                   class="text-xs text-gray-500 hover:text-gray-700 underline underline-offset-2 transition-colors">
@@ -131,7 +131,7 @@
                 <button (click)="toggleCompletion()"
                   class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:opacity-85 active:opacity-70"
                   style="background-color: var(--color-competence-text, #2E7D32);">
-                  ✓ Marcar como completado
+                  Marcar como completado
                 </button>
               }
             </div>

@@ -1,1 +1,194 @@
-<p>test works!</p>
+<div class="bg-background min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+
+        <button (click)="goBack()"
+            class="text-primary hover:text-primary-dark transition font-medium text-sm mb-6 flex items-center gap-1">
+            ← Volver al temario
+        </button>
+
+        @if (isLoading) {
+        <div class="text-center py-20">
+            <p class="text-txt-secondary">Cargando prueba...</p>
+        </div>
+        } @else if (hasError || !testInfo) {
+        <div class="text-center py-20 bg-surface border border-border rounded-xl">
+            <p class="text-lg font-semibold text-txt-primary mb-2">No se pudo cargar la prueba</p>
+            <app-secondary-button label="Intentar de nuevo" variant="primary" (click)="loadTestInfo()" />
+        </div>
+        } @else {
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+
+            <!-- Left panel — test info -->
+            <div class="md:col-span-2">
+                <div class="bg-surface border border-border rounded-xl p-6 space-y-5">
+                    <div>
+                        <span class="text-xs font-semibold text-primary uppercase tracking-wide">
+                            {{ scopeLabel }}
+                        </span>
+                        <h1 class="text-xl font-bold text-txt-primary mt-1">{{ testInfo.title }}</h1>
+                        @if (testInfo.code) {
+                        <p class="text-xs text-txt-secondary mt-0.5">Código: {{ testInfo.code }}</p>
+                        }
+                    </div>
+
+                    <div class="border-t border-border pt-4 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Preguntas</span>
+                            <span class="font-semibold text-txt-primary">{{ testInfo.numberQuestions }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Tiempo límite</span>
+                            <span class="font-semibold text-txt-primary">{{ formattedTime }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Intentos máximos</span>
+                            <span class="font-semibold text-txt-primary">{{ testInfo.maxAttempts }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Intentos utilizados</span>
+                            <span class="font-semibold text-txt-primary">{{ testInfo.attemptsUsed }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Intentos restantes</span>
+                            <span class="font-semibold"
+                                [class.text-green-600]="testInfo.attemptsRemaining > 0"
+                                [class.text-red-600]="testInfo.attemptsRemaining === 0">
+                                {{ testInfo.attemptsRemaining }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if (!attemptData) {
+                    <div class="border-t border-border pt-4">
+                        <app-primary-button
+                            label="Nuevo intento"
+                            [disabled]="!canAttempt || isStarting"
+                            variant="primary"
+                            (click)="onNewAttempt()"
+                            class="w-full" />
+                        @if (isStarting) {
+                        <p class="text-xs text-txt-secondary mt-2 text-center animate-pulse">Iniciando intento...</p>
+                        }
+                        @if (!canAttempt) {
+                        <p class="text-xs text-red-500 mt-2 text-center">No te quedan intentos disponibles.</p>
+                        }
+                    </div>
+                    }
+
+                    @if (attemptData) {
+                    <div class="border-t border-border pt-4 space-y-2">
+                        <p class="text-sm font-semibold text-txt-primary">Intento en curso</p>
+                        <p class="text-xs text-txt-secondary">Intento #{{ testInfo.attemptsUsed + 1 }}</p>
+                        <p class="text-xs text-txt-secondary">
+                            Pregunta {{ currentIndex + 1 }} de {{ totalQuestions }}
+                        </p>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right panel — attempt / questions -->
+            <div class="md:col-span-3">
+                @if (!attemptData) {
+                <div class="bg-surface border border-border rounded-xl p-6 min-h-[300px] flex items-center justify-center">
+                    <p class="text-txt-secondary text-sm">
+                        Presiona "Nuevo intento" para comenzar la prueba.
+                    </p>
+                </div>
+                } @else {
+                <div class="bg-surface border border-border rounded-xl">
+
+                    <!-- Question progress dots -->
+                    <div class="flex items-center justify-center gap-2 px-6 pt-5 pb-3 border-b border-border">
+                        @for (idx of questionIndexes; track idx) {
+                        <button (click)="goToQuestion(idx)"
+                            class="w-8 h-8 rounded-full text-xs font-semibold transition cursor-pointer"
+                            [class.bg-primary]="currentIndex === idx"
+                            [class.text-white]="currentIndex === idx"
+                            [class.bg-gray-100]="currentIndex !== idx"
+                            [class.text-txt-primary]="currentIndex !== idx"
+                            [class.hover:bg-gray-200]="currentIndex !== idx"
+                            [class.border]="currentIndex !== idx"
+                            [class.border-border]="currentIndex !== idx">
+                            {{ idx + 1 }}
+                        </button>
+                        }
+                    </div>
+
+                    <div class="p-6 space-y-6">
+                        @if (currentQuestion) {
+                        <!-- Context blocks -->
+                        @for (block of currentQuestion.contextBlocks; track block.id) {
+                        <div class="bg-gray-50 border border-border rounded-lg p-4 space-y-2">
+                            @if (block.title) {
+                            <p class="text-sm font-semibold text-txt-primary">{{ block.title }}</p>
+                            }
+                            <div class="text-sm text-txt-primary leading-relaxed whitespace-pre-line">{{ block.content }}</div>
+                            @if (block.sourceText) {
+                            <p class="text-xs text-txt-secondary italic mt-1">Fuente: {{ block.sourceText }}</p>
+                            }
+                        </div>
+                        }
+
+                        <!-- Question statement -->
+                        <div>
+                            <p class="text-sm text-txt-secondary font-medium mb-1">
+                                Pregunta {{ currentIndex + 1 }}
+                            </p>
+                            <p class="text-base font-semibold text-txt-primary leading-relaxed">
+                                {{ currentQuestion.statement }}
+                            </p>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="space-y-3">
+                            @for (opt of currentQuestion.options; track opt.optionId) {
+                            <button (click)="onSelectOption(currentQuestion.questionId, opt.optionId)"
+                                class="w-full text-left rounded-lg border p-4 transition cursor-pointer"
+                                [class.border-primary]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                [class.bg-primary/5]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                [class.border-border]="selectedOptions[currentQuestion.questionId] !== opt.optionId"
+                                [class.hover:border-primary/50]="selectedOptions[currentQuestion.questionId] !== opt.optionId">
+                                <div class="flex items-start gap-3">
+                                    <span
+                                        class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-semibold"
+                                        [class.bg-primary]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                        [class.text-white]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                        [class.bg-gray-100]="selectedOptions[currentQuestion.questionId] !== opt.optionId"
+                                        [class.text-txt-primary]="selectedOptions[currentQuestion.questionId] !== opt.optionId">
+                                        {{ opt.label }}
+                                    </span>
+                                    <div class="space-y-1">
+                                        @for (b of opt.blocks; track b.id) {
+                                        <p class="text-sm text-txt-primary whitespace-pre-line">{{ b.content }}</p>
+                                        }
+                                    </div>
+                                </div>
+                            </button>
+                            }
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="flex justify-between pt-4 border-t border-border">
+                            <app-secondary-button label="Anterior" variant="primary"
+                                [disabled]="!hasPrev"
+                                (click)="goToQuestion(currentIndex - 1)" />
+                            @if (hasNext) {
+                            <app-primary-button label="Siguiente" variant="primary"
+                                (click)="goToQuestion(currentIndex + 1)" />
+                            } @else {
+                            <app-primary-button label="Finalizar" variant="primary"
+                                (click)="onFinish()" />
+                            }
+                        </div>
+                        }
+                    </div>
+
+                </div>
+                }
+            </div>
+
+        </div>
+        }
+    </div>
+</div>

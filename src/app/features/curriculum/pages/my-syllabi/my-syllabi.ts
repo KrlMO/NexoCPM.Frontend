@@ -13,7 +13,6 @@ import { UserSyllabus } from '../../../users/models/user-syllabus.model';
 import { PaginationParams } from '../../../../shared/models/pagination.model';
 import { GetMySyllabiResponse } from '../../../users/models/users-response.model';
 import { ApiResponse } from '../../../../core/models/api-response.model';
-import { AssessmentData } from '../../../users/models/user-syllabus-detail.model';
 
 @Component({
   selector: 'app-my-syllabi',
@@ -131,11 +130,16 @@ export class MySyllabi implements OnInit {
     return 'Ver prueba';
   }
 
-  goToTest(test: AssessmentData) {
-    if (test.code) {
-      this.router.navigate(['/app/test', test.code]);
-    } else {
-      this.toastService.info('Prueba no disponible próximamente.');
+  goToTest(syllabus: UserSyllabus, unitSlug?: string) {
+    if (!syllabus.userLearningContextId) {
+      this.toastService.error('No se encontró el contexto de aprendizaje.');
+      return;
     }
+    this.router.navigate([
+      '/app/evaluations/tests',
+      syllabus.userLearningContextId,
+      syllabus.slug,
+      ...(unitSlug ? [unitSlug] : []),
+    ]);
   }
 }
