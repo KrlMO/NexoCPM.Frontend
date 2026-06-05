@@ -36,17 +36,17 @@
                     <div class="flex gap-3 mt-4">
                         <!--
                         <app-primary-button label="Cambiar correo electrónico" variant="secondary"
-                            (click)="notifyInfo('Función en desarrollo')" />
+                            (clicked)="notifyInfo('Función en desarrollo')" />
                         -->
                         <app-primary-button label="Cambiar contraseña" variant="secondary"
-                            (click)="openChangePasswordModal()" />
+                            (clicked)="openChangePasswordModal()" />
                     </div>
                     <div class="flex gap-3 mt-6 justify-end">
                         @if (generalEditing) {
-                        <app-secondary-button label="Cancelar" (click)="disableGeneralEdit()" />
-                        <app-primary-button label="Guardar" type="submit" (click)="saveGeneral()" />
+                        <app-secondary-button label="Cancelar" (clicked)="disableGeneralEdit()" />
+                        <app-primary-button label="Guardar" type="submit" (clicked)="saveGeneral()" />
                         } @else {
-                        <app-primary-button label="Editar" (click)="enableGeneralEdit()" />
+                        <app-primary-button label="Editar" (clicked)="enableGeneralEdit()" />
                         }
                     </div>
                 </div>
@@ -61,10 +61,10 @@
                         placeholder="https://linkedin.com/in/tu-perfil" />
                     <div class="flex gap-3 mt-6 justify-end">
                         @if (extraEditing) {
-                        <app-secondary-button label="Cancelar" (click)="disableExtraEdit()" />
-                        <app-primary-button label="Guardar" (click)="saveExtra()" />
+                        <app-secondary-button label="Cancelar" (clicked)="disableExtraEdit()" />
+                        <app-primary-button label="Guardar" (clicked)="saveExtra()" />
                         } @else {
-                        <app-primary-button label="Editar" (click)="enableExtraEdit()" />
+                        <app-primary-button label="Editar" (clicked)="enableExtraEdit()" />
                         }
                     </div>
                 </div>
@@ -79,10 +79,10 @@
                         placeholder="+51 999 999 999" />
                     <div class="flex gap-3 mt-6 justify-end">
                         @if (privateEditing) {
-                        <app-secondary-button label="Cancelar" (click)="disablePrivateEdit()" />
-                        <app-primary-button label="Guardar" (click)="savePrivate()" />
+                        <app-secondary-button label="Cancelar" (clicked)="disablePrivateEdit()" />
+                        <app-primary-button label="Guardar" (clicked)="savePrivate()" />
                         } @else {
-                        <app-primary-button label="Editar" (click)="enablePrivateEdit()" />
+                        <app-primary-button label="Editar" (clicked)="enablePrivateEdit()" />
                         }
                     </div>
                 </div>
@@ -107,18 +107,18 @@
                     </fieldset>
                     <div class="flex gap-3 mt-6 justify-end">
                         @if (privacyEditing) {
-                        <app-secondary-button label="Cancelar" (click)="disablePrivacyEdit()" />
-                        <app-primary-button label="Guardar" (click)="savePrivacy()" />
+                        <app-secondary-button label="Cancelar" (clicked)="disablePrivacyEdit()" />
+                        <app-primary-button label="Guardar" (clicked)="savePrivacy()" />
                         } @else {
-                        <app-primary-button label="Editar" (click)="enablePrivacyEdit()" />
+                        <app-primary-button label="Editar" (clicked)="enablePrivacyEdit()" />
                         }
                     </div>
                 </div>
             </app-card>
 
             <div class="flex gap-4 justify-center">
-                <app-secondary-button label="DESACTIVAR MI CUENTA" variant="danger" (click)="confirmDeactivate()" />
-                <app-primary-button label="ELIMINAR MI CUENTA" variant="danger" (click)="confirmDelete()" />
+                <app-secondary-button label="DESACTIVAR MI CUENTA" variant="danger" (clicked)="confirmDeactivate()" />
+                <app-primary-button label="ELIMINAR MI CUENTA" variant="danger" (clicked)="confirmDelete()" />
             </div>
         </div>
     </app-card>
@@ -140,7 +140,7 @@
                 type="password" [control]="confirmPasswordControl" />
         </div>
         <div class="flex justify-end gap-3 mt-6">
-            <app-secondary-button label="Cancelar" (click)="closeChangePasswordModal()" />
+            <app-secondary-button label="Cancelar" (clicked)="closeChangePasswordModal()" />
             <app-primary-button label="Cambiar contraseña" type="submit" />
         </div>
     </form>
@@ -155,8 +155,7 @@
             ¿Estás seguro de que deseas desactivar tu cuenta? Podrás reactivarla después iniciando sesión nuevamente.
         </p>
         <div class="flex gap-3 mt-2">
-            <app-secondary-button label="Cancelar" (click)="cancelAccountAction()" />
-            <app-primary-button label="Desactivar" variant="danger" (click)="deactivateAccount()" />
+            <app-secondary-button label="Cancelar" (clicked)="cancelAccountAction()" />
         </div>
     </div>
 </app-general-modal>
@@ -170,8 +169,8 @@
             ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.
         </p>
         <div class="flex gap-3 mt-2">
-            <app-secondary-button label="Cancelar" (click)="cancelAccountAction()" />
-            <app-primary-button label="Eliminar" variant="danger" (click)="deleteAccount()" />
+            <app-secondary-button label="Cancelar" (clicked)="cancelAccountAction()" />
+            <app-primary-button label="Eliminar" variant="danger" (clicked)="deleteAccount()" />
         </div>
     </div>
 </app-general-modal>

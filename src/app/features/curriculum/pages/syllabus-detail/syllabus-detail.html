@@ -13,7 +13,7 @@
         } @else if (error || !syllabus) {
         <div class="text-center py-20 bg-surface border border-border rounded-xl">
             <p class="text-lg font-semibold text-txt-primary mb-2">No se pudo cargar el temario</p>
-            <app-secondary-button label="Intentar de nuevo" variant="primary" (click)="retry()" />
+            <app-secondary-button label="Intentar de nuevo" variant="primary" (clicked)="retry()" />
         </div>
         } @else {
         <div class="mb-8">
@@ -100,7 +100,7 @@
                                             {{ subtopic.viewed ? 'VISTO' : 'NO VISTO' }}
                                         </span>
                                         <app-secondary-button label="Ver detalle" variant="primary"
-                                            (click)="showSubtopicDetail(subtopic)" />
+                                            (clicked)="showSubtopicDetail(subtopic)" />
                                     </div>
                                 </div>
                             </div>
@@ -127,7 +127,7 @@
                                 {{ getTestStatusLabel(unit.unitTest.status) }}
                             </span>
                             <app-primary-button [label]="getTestButtonLabel(unit.unitTest.status)"
-                                (click)="goToTest(unit.unitTest!)" />
+                                (clicked)="goToTest(unit.unitTest!)" />
                         </div>
                     </div>
                     }
@@ -154,7 +154,7 @@
                             {{ getTestStatusLabel(syllabus.finalSyllabusTest.status) }}
                         </span>
                         <app-primary-button [label]="getTestButtonLabel(syllabus.finalSyllabusTest.status)"
-                            (click)="goToTest(syllabus.finalSyllabusTest!)" />
+                            (clicked)="goToTest(syllabus.finalSyllabusTest!)" />
                     </div>
                 </div>
             </div>

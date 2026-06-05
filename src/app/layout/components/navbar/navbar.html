@@ -14,7 +14,7 @@
     <div class="flex items-center gap-2 md:gap-4">
 
         @if (!(user$ | async)) {
-        <app-primary-button class="hidden md:block" label="Iniciar Sesión" (click)="goLogin()" />
+        <app-primary-button class="hidden md:block" label="Iniciar Sesión" (clicked)="goLogin()" />
 
         <button class="md:hidden p-2" (click)="toggleMobileMenu()">
             ☰
@@ -23,7 +23,7 @@
 
         @if (user$ | async; as user) {
         <div class="flex items-center gap-1 bg-amber-50/80 border border-amber-200/50 rounded-full px-3 py-1 text-sm font-semibold text-amber-700">
-            <span>{{ user.starRating ?? 0 }}</span>
+            <span>{{ user.numberStar ?? 0 }}</span>
             <app-star [filled]="true" sizeClass="w-5 h-5" filledColorClass="text-amber-500" />
         </div>
 
@@ -85,7 +85,7 @@
 
     @if (!(user$ | async)) {
     <div class="flex justify-center py-1">
-        <app-primary-button label="Iniciar sesión" (click)="goLogin(); closeMobileMenu()" />
+        <app-primary-button label="Iniciar sesión" (clicked)="goLogin(); closeMobileMenu()" />
     </div>
     }
 

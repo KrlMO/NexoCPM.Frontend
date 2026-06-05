@@ -11,11 +11,11 @@ export class SecondaryButton {
   @Input() disabled: boolean = false;
   @Input() variant: 'primary' | 'danger' | 'pink' = 'primary';
 
-  @Output() click = new EventEmitter<void>();
+  @Output() clicked = new EventEmitter<void>();
 
   onClick() {
     if (!this.disabled) {
-      this.click.emit();
+      this.clicked.emit();
     }
   }
 

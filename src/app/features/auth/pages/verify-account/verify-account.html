@@ -31,8 +31,8 @@
                 Tu correo electrónico ha sido verificado correctamente. Ya puedes iniciar sesión en NexoCPM.
             </p>
             <div class="mt-8 flex flex-col gap-4">
-                <app-primary-button label="Iniciar sesión" (click)="navigateToLogin()" />
-                <app-secondary-button label="Volver al inicio" (click)="navigateToHome()" />
+                <app-primary-button label="Iniciar sesión" (clicked)="navigateToLogin()" />
+                <app-secondary-button label="Volver al inicio" (clicked)="navigateToHome()" />
             </div>
         </div>
         }
@@ -52,7 +52,7 @@
                 {{ errorMessage }}
             </p>
             <div class="mt-8 flex flex-col gap-4">
-                <app-secondary-button label="Volver al inicio" (click)="navigateToHome()" />
+                <app-secondary-button label="Volver al inicio" (clicked)="navigateToHome()" />
             </div>
         </div>
         }

@@ -7,13 +7,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './primary-button.css',
 })
 export class PrimaryButton {
-  @Output() click = new EventEmitter<void>();
+  @Output() clicked = new EventEmitter<void>();
   @Input() label: string = '';
   @Input() type: 'button' | 'submit' = 'button';
   @Input() disabled: boolean = false;
   @Input() variant: 'primary' | 'secondary' | 'danger' | 'pink' = 'primary';
   onClick() {
-    this.click.emit();
+    this.clicked.emit();
   }
 
   get classes(): string {

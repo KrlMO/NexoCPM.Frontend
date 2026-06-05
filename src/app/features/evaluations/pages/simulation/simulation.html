@@ -50,7 +50,7 @@
                             <span class="font-medium">Tiempo:</span> {{ sim.timeLimitSeconds / 60 }} minutos
                         </p>
                         <div class="mt-auto flex justify-center">
-                            <app-primary-button label="Comenzar" (click)="onStartSimulation(sim)" />
+                            <app-primary-button label="Comenzar" (clicked)="onStartSimulation(sim)" />
                         </div>
                     </div>
                 </app-card>
@@ -79,7 +79,7 @@
             <app-card>
                 <div class="text-center py-8">
                     <p class="text-txt-secondary mb-4">Inicia sesión para ver tu historial de simulacros.</p>
-                    <app-primary-button label="Iniciar sesión" (click)="goLogin()" />
+                    <app-primary-button label="Iniciar sesión" (clicked)="goLogin()" />
                 </div>
             </app-card>
             } @else if (isLoadingHistory) {

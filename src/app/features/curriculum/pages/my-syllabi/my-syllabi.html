@@ -83,7 +83,7 @@
                                         {{ getTestStatusLabel(unit.test.status) }}
                                     </span>
                                     <app-primary-button label="Ver prueba" variant="primary"
-                                        (click)="goToTest(syllabus, unit.slug)" />
+                                        (clicked)="goToTest(syllabus, unit.slug)" />
                                 </div>
                                 }
                             </div>
@@ -96,7 +96,7 @@
                         </div>
 
                         <div class="mt-4 flex justify-center">
-                            <app-secondary-button label="Continuar" variant="primary" (click)="continueSyllabus(syllabus)" />
+                            <app-secondary-button label="Continuar" variant="primary" (clicked)="continueSyllabus(syllabus)" />
                         </div>
                     </div>
                 </app-card>
@@ -112,7 +112,7 @@
                 <p class="text-lg font-semibold text-txt-primary mb-1">No tienes temarios en curso</p>
                 <p class="text-txt-secondary text-sm">Explora y comienza un nuevo temario</p>
                 <div class="mt-6">
-                    <app-primary-button label="Explorar temarios" variant="primary" (click)="goToSyllabi()" />
+                    <app-primary-button label="Explorar temarios" variant="primary" (clicked)="goToSyllabi()" />
                 </div>
             </div>
             }

@@ -19,10 +19,10 @@
             <app-primary-button label="Reenviar en {{ remainingSeconds }}s" type="button" [disabled]="true" />
             }
             @else {
-            <app-primary-button label="Reenviar correo electrónico" (click)="resendEmail()" />
+            <app-primary-button label="Reenviar correo electrónico" (clicked)="resendEmail()" />
             }
-            <app-secondary-button label="Iniciar sesión" (click)="navigateToLogin()" />
-            <app-secondary-button label="Volver al inicio" (click)="navigateToHome()" />
+            <app-secondary-button label="Iniciar sesión" (clicked)="navigateToLogin()" />
+            <app-secondary-button label="Volver al inicio" (clicked)="navigateToHome()" />
         </div>
     </app-card>
 </div>

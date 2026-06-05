@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/api-response.model';
 import { PaginationParams } from '../../../shared/models/pagination.model';
-import { GetSimulationsResponse, GetSimulationsHistoryResponse, GetTestInfoResponse, StartAssessmentAttemptResponse } from '../models/evaluations-response.model';
+import { GetSimulationsResponse, GetSimulationsHistoryResponse, GetTestInfoResponse, StartAssessmentAttemptResponse, SubmitAssessmentRequest, SubmitAssessmentResponse, GetTestHistoryResponse, GetAttemptDetailResponse } from '../models/evaluations-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -42,10 +42,37 @@ export class EvaluationsService {
     return this.http.get<ApiResponse<GetTestInfoResponse>>(`${this.apiUrl}/tests/info`, { params });
   }
 
+  public getTestHistory(userLearningContextId: number, syllabusSlug: string, unitSlug?: string) {
+    let params = new HttpParams()
+      .set('userLearningContextId', userLearningContextId.toString())
+      .set('syllabusSlug', syllabusSlug);
+    if (unitSlug) params = params.set('unitSlug', unitSlug);
+
+    return this.http.get<ApiResponse<GetTestHistoryResponse>>(`${this.apiUrl}/tests/history`, { params });
+  }
+
   public startAssessmentAttempt(userLearningContextId: number, assessmentId: number) {
     return this.http.post<ApiResponse<StartAssessmentAttemptResponse>>(
       `${this.apiUrl}/${userLearningContextId}/assessments/${assessmentId}/start`,
       null,
+    );
+  }
+
+  public getAttemptDetail(userLearningContextId: number, attemptId: number) {
+    return this.http.get<ApiResponse<GetAttemptDetailResponse>>(
+      `${this.apiUrl}/${userLearningContextId}/attempts/${attemptId}/detail`,
+    );
+  }
+
+  public submitAssessmentAttempt(
+    userLearningContextId: number,
+    assessmentId: number,
+    attemptId: number,
+    body: SubmitAssessmentRequest,
+  ) {
+    return this.http.post<ApiResponse<SubmitAssessmentResponse>>(
+      `${this.apiUrl}/${userLearningContextId}/assessments/${assessmentId}/attempts/${attemptId}/submit`,
+      body,
     );
   }
 }

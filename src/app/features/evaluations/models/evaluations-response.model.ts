@@ -67,3 +67,72 @@ export interface StartAssessmentAttemptResponse {
     totalQuestions: number;
     questions: AttemptQuestionDto[];
 }
+
+export interface TestHistoryItem {
+    attemptId: number;
+    finishedAt: string;
+    passed: boolean;
+    score: number;
+    starsEarned: number;
+    totalQuestions: number;
+    correctAnswers: number;
+}
+
+export interface GetTestHistoryResponse {
+    history: TestHistoryItem[];
+}
+
+export interface SubmitAssessmentRequest {
+    syllabusSlug: string;
+    unitSlug: string | null;
+    answers: AnswerDto[];
+}
+
+export interface AnswerDto {
+    questionId: number;
+    selectedOptionId: number;
+}
+
+export interface SubmitAssessmentResponse {
+    attemptId: number;
+    assessmentId: number;
+    totalQuestions: number;
+    correctAnswers: number;
+    score: number;
+    starsEarned: number;
+    finishedAt: string;
+    passed: boolean;
+    recommendations: string[];
+}
+
+export interface GetAttemptDetailResponse {
+    attemptId: number;
+    assessmentId: number;
+    totalQuestions: number;
+    correctAnswers: number;
+    score: number;
+    starsEarned: number;
+    finishedAt?: string;
+    passed: boolean;
+    recommendations: string[];
+    questions: AttemptQuestionDetailDto[];
+}
+
+export interface AttemptQuestionDetailDto {
+    questionId: number;
+    statement: string;
+    orderIndex: number;
+    selectedOptionId?: number;
+    correctOptionId?: number;
+    isCorrect: boolean;
+    contextBlocks: QuestionContentBlockDto[];
+    options: AttemptOptionDetailDto[];
+}
+
+export interface AttemptOptionDetailDto {
+    optionId: number;
+    label: string;
+    isCorrect: boolean;
+    isSelected: boolean;
+    blocks: OptionBlockDto[];
+}
