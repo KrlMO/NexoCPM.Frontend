@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
@@ -25,7 +25,7 @@ import {
   templateUrl: './test.html',
   styleUrl: './test.css',
 })
-export class Test implements OnInit {
+export class Test implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private evaluationsService = inject(EvaluationsService);
@@ -49,6 +49,12 @@ export class Test implements OnInit {
   public isLoadingDetail = false;
   public detailCurrentIndex = 0;
   public showFinishModal = false;
+  public timerSeconds = 0;
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
+
+  ngOnDestroy() {
+    this.stopTimer();
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -147,6 +153,8 @@ export class Test implements OnInit {
           this.currentIndex = 0;
           this.selectedOptions = {};
           this.resultData = null;
+          const seconds = this.attemptData?.timeLimitSeconds ?? this.testInfo!.timeLimitSeconds;
+          this.startTimer(seconds);
         },
         error: () => {
           this.isStarting = false;
@@ -236,6 +244,56 @@ export class Test implements OnInit {
   }
 
   onFinish() {
+    this.submitAttempt(false);
+  }
+
+  goBack() {
+    this.router.navigate(['/app/my-syllabi', this.userLearningContextId, this.syllabusSlug]);
+  }
+
+  private startTimer(seconds: number) {
+    this.stopTimer();
+    this.timerSeconds = seconds;
+    this.timerInterval = setInterval(() => {
+      this.timerSeconds--;
+      if (this.timerSeconds <= 0) {
+        this.timerSeconds = 0;
+        this.stopTimer();
+        this.submitAttempt(true);
+      }
+    }, 1000);
+  }
+
+  private stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  get formattedTimer(): string {
+    const t = this.timerSeconds;
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = t % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  get timerPercentage(): number {
+    if (!this.testInfo?.timeLimitSeconds || this.testInfo.timeLimitSeconds === 0) return 0;
+    return (this.timerSeconds / this.testInfo.timeLimitSeconds) * 100;
+  }
+
+  get timerWarning(): boolean {
+    return this.timerSeconds > 0 && this.timerSeconds <= 60;
+  }
+
+  get timerDanger(): boolean {
+    return this.timerSeconds > 0 && this.timerSeconds <= 30;
+  }
+
+  private submitAttempt(isAutoSubmit: boolean) {
     if (!this.attemptData || !this.testInfo || this.isSubmitting) return;
     this.showFinishModal = false;
     this.isSubmitting = true;
@@ -258,15 +316,14 @@ export class Test implements OnInit {
         next: res => {
           this.resultData = res.data ?? null;
           this.isSubmitting = false;
+          if (isAutoSubmit) {
+            this.toastService.info('Se ha agotado el tiempo. La prueba se ha enviado automáticamente.');
+          }
         },
         error: () => {
           this.isSubmitting = false;
           this.toastService.error('Error al enviar la prueba.');
         },
       });
-  }
-
-  goBack() {
-    this.router.navigate(['/app/my-syllabi', this.userLearningContextId, this.syllabusSlug]);
   }
 }

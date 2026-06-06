@@ -155,6 +155,30 @@
                         <p class="text-xs text-txt-secondary">
                             Pregunta {{ currentIndex + 1 }} de {{ totalQuestions }}
                         </p>
+                        <div class="flex items-center gap-2 pt-1">
+                            <svg class="w-4 h-4 shrink-0"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-secondary]="!timerWarning"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span class="font-semibold text-sm font-mono"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-primary]="!timerWarning">
+                                {{ formattedTimer }}
+                            </span>
+                        </div>
+                        <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-1000"
+                                [style.width.%]="timerPercentage"
+                                [class.bg-red-500]="timerDanger"
+                                [class.bg-amber-500]="timerWarning && !timerDanger"
+                                [class.bg-primary]="!timerWarning">
+                            </div>
+                        </div>
                     </div>
                     }
                 </div>
@@ -346,6 +370,22 @@
                             {{ idx + 1 }}
                         </button>
                         }
+                        <div class="flex items-center gap-1.5 ml-3 pl-3 border-l border-border">
+                            <svg class="w-4 h-4 shrink-0"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-secondary]="!timerWarning"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span class="text-xs font-semibold font-mono"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-primary]="!timerWarning">
+                                {{ formattedTimer }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="p-6 space-y-6">
