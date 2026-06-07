@@ -1,0 +1,294 @@
+<div class="bg-background min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+
+        <button (click)="goBack()"
+            class="text-primary hover:text-primary-dark transition font-medium text-sm mb-6 flex items-center gap-1">
+            ← Volver a simulacros
+        </button>
+
+        @if (isLoading) {
+        <div class="text-center py-20">
+            <p class="text-txt-secondary">Cargando simulacro...</p>
+        </div>
+        } @else if (hasError) {
+        <div class="text-center py-20 bg-surface border border-border rounded-xl">
+            <p class="text-lg font-semibold text-txt-primary mb-2">No se pudo cargar el simulacro</p>
+            <app-secondary-button label="Intentar de nuevo" variant="primary" (clicked)="goBack()" />
+        </div>
+        } @else {
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+
+            <!-- Left panel — info -->
+            <div class="md:col-span-2">
+                <div class="bg-surface border border-border rounded-xl p-6 space-y-5">
+                    <div>
+                        <h1 class="text-xl font-bold text-txt-primary">{{ attemptData?.title ?? 'Simulacro' }}</h1>
+                        <p class="text-xs text-txt-secondary mt-1">Modo: {{ generationModeLabel }}</p>
+                    </div>
+
+                    <div class="border-t border-border pt-4 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Preguntas</span>
+                            <span class="font-semibold text-txt-primary">{{ totalQuestions }}</span>
+                        </div>
+                        @if (attemptData?.timeLimitSeconds) {
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Tiempo límite</span>
+                            <span class="font-semibold text-txt-primary">{{ formattedTimeLimit }}</span>
+                        </div>
+                        }
+                    </div>
+
+                    @if (resultData) {
+                    <div class="border-t border-border pt-4 space-y-3">
+                        <p class="text-sm font-semibold text-txt-primary">Resultado</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Puntaje</span>
+                            <span class="text-lg font-bold"
+                                [class.text-green-600]="resultData.passed"
+                                [class.text-red-600]="!resultData.passed">
+                                {{ resultData.score }}%
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Aciertos</span>
+                            <span class="font-semibold text-txt-primary">{{ resultData.correctAnswers }}/{{ resultData.totalQuestions }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-txt-secondary">Estado</span>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full"
+                                [class.bg-green-100]="resultData.passed"
+                                [class.text-green-700]="resultData.passed"
+                                [class.bg-red-100]="!resultData.passed"
+                                [class.text-red-700]="!resultData.passed">
+                                {{ resultData.passed ? 'APROBADO' : 'DESAPROBADO' }}
+                            </span>
+                        </div>
+                    </div>
+                    } @else {
+                    <div class="border-t border-border pt-4 space-y-2">
+                        <p class="text-sm font-semibold text-txt-primary">En curso</p>
+                        <p class="text-xs text-txt-secondary">
+                            Pregunta {{ currentIndex + 1 }} de {{ totalQuestions }}
+                        </p>
+                        <div class="flex items-center gap-2 pt-1">
+                            <svg class="w-4 h-4 shrink-0"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-secondary]="!timerWarning"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span class="font-semibold text-sm font-mono"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-primary]="!timerWarning">
+                                {{ formattedTimer }}
+                            </span>
+                        </div>
+                        <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-1000"
+                                [style.width.%]="timerPercentage"
+                                [class.bg-red-500]="timerDanger"
+                                [class.bg-amber-500]="timerWarning && !timerDanger"
+                                [class.bg-primary]="!timerWarning">
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right panel — questions / results -->
+            <div class="md:col-span-3">
+                @if (resultData) {
+                <div class="bg-surface border border-border rounded-xl p-6 space-y-6">
+                    <div class="text-center">
+                        <p class="text-lg font-bold text-txt-primary mb-1">Simulacro finalizado</p>
+                        <p class="text-sm text-txt-secondary">Has completado el simulacro exitosamente.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-50 border border-border rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold"
+                                [class.text-green-600]="resultData.passed"
+                                [class.text-red-600]="!resultData.passed">
+                                {{ resultData.score }}%
+                            </p>
+                            <p class="text-xs text-txt-secondary mt-1">Puntaje</p>
+                        </div>
+                        <div class="bg-gray-50 border border-border rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold text-txt-primary">{{ resultData.correctAnswers }}/{{ resultData.totalQuestions }}</p>
+                            <p class="text-xs text-txt-secondary mt-1">Aciertos</p>
+                        </div>
+                    </div>
+
+                    @if (resultData.recommendations.length) {
+                    <div>
+                        <p class="text-sm font-semibold text-txt-primary mb-2">Recomendaciones</p>
+                        <ul class="space-y-1.5">
+                            @for (rec of resultData.recommendations; track rec) {
+                            <li class="text-sm text-txt-secondary flex items-start gap-2">
+                                <span class="mt-1 w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                                {{ rec }}
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                    }
+
+                    <div class="flex justify-center pt-2">
+                        <app-secondary-button label="Volver a simulacros" variant="primary" (clicked)="goBack()" />
+                    </div>
+                </div>
+                } @else {
+                <div class="bg-surface border border-border rounded-xl">
+
+                    <!-- Question progress dots -->
+                    <div class="flex items-center justify-center gap-2 px-6 pt-5 pb-3 border-b border-border">
+                        @for (idx of questionIndexes; track idx) {
+                        <button (click)="goToQuestion(idx)"
+                            class="w-8 h-8 rounded-full text-xs font-semibold transition cursor-pointer"
+                            [class.bg-primary]="currentIndex === idx"
+                            [class.text-white]="currentIndex === idx"
+                            [class.bg-gray-100]="currentIndex !== idx"
+                            [class.text-txt-primary]="currentIndex !== idx"
+                            [class.hover:bg-gray-200]="currentIndex !== idx"
+                            [class.border]="currentIndex !== idx"
+                            [class.border-border]="currentIndex !== idx">
+                            {{ idx + 1 }}
+                        </button>
+                        }
+                        <div class="flex items-center gap-1.5 ml-3 pl-3 border-l border-border">
+                            <svg class="w-4 h-4 shrink-0"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-secondary]="!timerWarning"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span class="text-xs font-semibold font-mono"
+                                [class.text-red-600]="timerDanger"
+                                [class.text-amber-500]="timerWarning && !timerDanger"
+                                [class.text-txt-primary]="!timerWarning">
+                                {{ formattedTimer }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-6 space-y-6">
+                        @if (currentQuestion) {
+                        <!-- Context blocks -->
+                        @for (block of currentQuestion.contextBlocks; track block.id) {
+                        <div class="bg-gray-50 border border-border rounded-lg p-4 space-y-2">
+                            @if (block.title) {
+                            <p class="text-sm font-semibold text-txt-primary">{{ block.title }}</p>
+                            }
+                            <div class="text-sm text-txt-primary leading-relaxed whitespace-pre-line">{{ block.content }}</div>
+                            @if (block.sourceText) {
+                            <p class="text-xs text-txt-secondary italic mt-1">Fuente: {{ block.sourceText }}</p>
+                            }
+                        </div>
+                        }
+
+                        <!-- Question statement -->
+                        <div>
+                            <p class="text-sm text-txt-secondary font-medium mb-1">
+                                Pregunta {{ currentIndex + 1 }}
+                            </p>
+                            <p class="text-base font-semibold text-txt-primary leading-relaxed">
+                                {{ currentQuestion.statement }}
+                            </p>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="space-y-3">
+                            @for (opt of sortedOptions; track opt.optionId) {
+                            <button (click)="onSelectOption(currentQuestion.questionId, opt.optionId)"
+                                class="w-full text-left rounded-lg border p-4 transition cursor-pointer"
+                                [class.border-primary]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                [class.bg-primary/5]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                [class.border-border]="selectedOptions[currentQuestion.questionId] !== opt.optionId"
+                                [class.hover:border-primary/50]="selectedOptions[currentQuestion.questionId] !== opt.optionId">
+                                <div class="flex items-start gap-3">
+                                    <span
+                                        class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-semibold"
+                                        [class.bg-primary]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                        [class.text-white]="selectedOptions[currentQuestion.questionId] === opt.optionId"
+                                        [class.bg-gray-100]="selectedOptions[currentQuestion.questionId] !== opt.optionId"
+                                        [class.text-txt-primary]="selectedOptions[currentQuestion.questionId] !== opt.optionId">
+                                        {{ opt.label }}
+                                    </span>
+                                    <div class="space-y-1">
+                                        @for (b of opt.blocks; track b.id) {
+                                        <p class="text-sm text-txt-primary whitespace-pre-line">{{ b.content }}</p>
+                                        }
+                                    </div>
+                                </div>
+                            </button>
+                            }
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="flex justify-between pt-4 border-t border-border">
+                            <app-secondary-button label="Anterior" variant="primary"
+                                [disabled]="!hasPrev"
+                                (clicked)="goToQuestion(currentIndex - 1)" />
+                            @if (hasNext) {
+                            <app-primary-button label="Siguiente" variant="primary"
+                                (clicked)="goToQuestion(currentIndex + 1)" />
+                            } @else {
+                            <app-primary-button label="Finalizar" variant="primary"
+                                (clicked)="openFinishModal()" />
+                            }
+                        </div>
+                        }
+                    </div>
+
+                </div>
+                }
+            </div>
+
+        </div>
+        }
+
+        @if (showFinishModal) {
+        <app-general-modal (cancel)="closeFinishModal()">
+            <h3 class="text-xl font-bold text-txt-primary mb-1">Confirmar envío</h3>
+            <p class="text-sm text-txt-secondary mb-4">
+                Has respondido {{ answeredCount }} de {{ attemptData?.totalQuestions ?? 0 }} preguntas.
+            </p>
+
+            <div class="space-y-2 mb-6 max-h-60 overflow-y-auto">
+                @for (q of attemptData?.questions ?? []; track q.questionId) {
+                <div class="flex items-center justify-between px-3 py-2.5 rounded-lg border text-sm"
+                    [class.border-green-300]="selectedOptions[q.questionId]"
+                    [class.bg-green-50]="selectedOptions[q.questionId]"
+                    [class.border-gray-200]="!selectedOptions[q.questionId]"
+                    [class.bg-gray-50]="!selectedOptions[q.questionId]">
+                    <span class="font-medium text-txt-primary">Pregunta {{ $index + 1 }}</span>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full"
+                        [class.bg-green-100]="selectedOptions[q.questionId]"
+                        [class.text-green-700]="selectedOptions[q.questionId]"
+                        [class.bg-yellow-100]="!selectedOptions[q.questionId]"
+                        [class.text-yellow-700]="!selectedOptions[q.questionId]">
+                        {{ selectedOptions[q.questionId] ? 'Respondida' : 'Sin responder' }}
+                    </span>
+                </div>
+                }
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
+                <app-secondary-button label="Cancelar" variant="primary"
+                    (clicked)="closeFinishModal()" />
+                <app-primary-button label="Enviar respuestas" variant="primary"
+                    [disabled]="isSubmitting"
+                    (clicked)="onFinish()" />
+            </div>
+        </app-general-modal>
+        }
+
+    </div>
+</div>

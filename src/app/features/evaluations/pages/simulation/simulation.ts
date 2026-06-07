@@ -2,11 +2,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card } from '../../../../shared/ui/card/card';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
+import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/secondary-button';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
+import { GeneralModal } from '../../../../shared/ui/modal/general-modal/general-modal';
 import { ApiResponse } from '../../../../core/models/api-response.model';
-import { GetSimulationsResponse, GetSimulationsHistoryResponse } from '../../models/evaluations-response.model';
+import { GetSimulationsResponse, GetSimulationsHistoryResponse, GetSimulationModesResponse } from '../../models/evaluations-response.model';
 import { PaginationParams } from '../../../../shared/models/pagination.model';
 import { EvaluationsService } from '../../services/evaluations.service';
 import { Simulation as SimulationModel, SimulationHistoryItem } from '../../models/simulation.model';
@@ -18,9 +20,11 @@ import { Star } from '../../../../shared/ui/star/star';
   imports: [
     Card,
     PrimaryButton,
+    SecondaryButton,
     Pagination,
     FormsModule,
     Star,
+    GeneralModal,
   ],
   templateUrl: './simulation.html',
   styleUrl: './simulation.css',
@@ -46,6 +50,13 @@ export class Simulation implements OnInit {
   public historyTotalPages: number = 0;
   public isLoadingHistory: boolean = false;
   public isAuthenticated: boolean = false;
+
+  public readonly modes = ['RANDOM', 'BALANCED', 'WEAKNESSFOCUS'] as const;
+  public showModeModal = false;
+  public selectedMode: string = 'RANDOM';
+  public hasHistoricalData = false;
+  public currentSimulation: SimulationModel | null = null;
+  public isLoadingModes = false;
 
   ngOnInit() {
     this.isAuthenticated = this.auth.isAuthenticated();
@@ -118,7 +129,42 @@ export class Simulation implements OnInit {
   }
 
   public onStartSimulation(sim: SimulationModel) {
-    this.toastService.info('Funcionalidad próximamente disponible.');
+    this.currentSimulation = sim;
+    this.isLoadingModes = true;
+    this.showModeModal = true;
+    this.selectedMode = 'RANDOM';
+
+    this.evaluationsService.getSimulationModes(sim.id).subscribe({
+      next: (res: ApiResponse<GetSimulationModesResponse>) => {
+        this.hasHistoricalData = res.data?.hasHistoricalData ?? false;
+        if (!this.hasHistoricalData) {
+          this.selectedMode = 'RANDOM';
+        }
+        this.isLoadingModes = false;
+      },
+      error: () => {
+        this.hasHistoricalData = false;
+        this.selectedMode = 'RANDOM';
+        this.isLoadingModes = false;
+      },
+    });
+  }
+
+  public closeModeModal() {
+    this.showModeModal = false;
+    this.currentSimulation = null;
+  }
+
+  public onStartWithMode() {
+    if (!this.currentSimulation) return;
+    const simId = this.currentSimulation.id;
+    const mode = this.selectedMode;
+    this.closeModeModal();
+    this.router.navigate([
+      '/app/evaluations/simulation-attempt',
+      simId,
+      mode,
+    ]);
   }
 
   public onPageChange(page: number) {

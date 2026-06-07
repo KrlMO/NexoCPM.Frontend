@@ -93,6 +93,10 @@ export const routes: Routes = [
                         loadComponent: () => import('./features/evaluations/pages/simulation/simulation').then(m => m.Simulation)
                     },
                     {
+                        path: 'simulation-attempt/:assessmentId/:generationMode',
+                        loadComponent: () => import('./features/evaluations/pages/simulation-attempt/simulation-attempt').then(m => m.SimulationAttempt)
+                    },
+                    {
                         path: 'tests/:userLearningContextId/:syllabusSlug/:unitSlug',
                         loadComponent: () => import('./features/evaluations/pages/test/test').then(m => m.Test)
                     },

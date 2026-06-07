@@ -105,6 +105,21 @@ export interface SubmitAssessmentResponse {
     recommendations: string[];
 }
 
+export interface GetSimulationModesResponse {
+    hasHistoricalData: boolean;
+}
+
+export interface StartAssessmentAttemptSimulationResponse {
+    attemptId: number;
+    assessmentId: number;
+    startedAt: string;
+    timeLimitSeconds?: number;
+    totalQuestions: number;
+    generationModeUsed: string;
+    title: string;
+    questions: AttemptQuestionDto[];
+}
+
 export interface GetAttemptDetailResponse {
     attemptId: number;
     assessmentId: number;

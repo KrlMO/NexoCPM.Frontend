@@ -98,12 +98,12 @@
                 <div class="flex items-center justify-between mt-3 pt-3 border-t"
                     style="border-color: #E5DEB0;">
                     <app-secondary-button label="⟨ Anterior" variant="primary"
-                        [disabled]="resourcePage <= 1" (click)="previousPage()" />
+                        [disabled]="resourcePage <= 1" (clicked)="previousPage()" />
                     <span class="text-xs font-medium">
                         {{ resourcePage }} / {{ resourceTotalPages }}
                     </span>
                     <app-secondary-button label="Siguiente ⟩" variant="primary"
-                        [disabled]="resourcePage >= resourceTotalPages" (click)="nextPage()" />
+                        [disabled]="resourcePage >= resourceTotalPages" (clicked)="nextPage()" />
                 </div>
                 }
 
@@ -141,12 +141,12 @@
         @if (subtopicSlugs.length > 1) {
         <div class="flex items-center justify-between pt-4 border-t border-border mt-5">
             <app-secondary-button label="⟨ Anterior" variant="primary"
-                [disabled]="!hasPrevious" (click)="previous()" />
+                [disabled]="!hasPrevious" (clicked)="previous()" />
             <span class="text-xs font-medium text-txt-secondary">
                 {{ currentIndex + 1 }} / {{ subtopicSlugs.length }}
             </span>
             <app-secondary-button label="Siguiente ⟩" variant="primary"
-                [disabled]="!hasNext" (click)="next()" />
+                [disabled]="!hasNext" (clicked)="next()" />
         </div>
         }
     </div>

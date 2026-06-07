@@ -57,12 +57,12 @@
 
                         @if (syllabus.syllabusUnits?.length) {
                         <div class="border-t border-border pt-3 mb-4 space-y-3">
-                            @for (unit of syllabus.syllabusUnits ?? []; track unit.id) {
+                            @for (unit of syllabus.syllabusUnits; track unit.id) {
                             <div>
                                 <p class="text-xs font-semibold text-txt-primary mb-1">{{ unit.name }}</p>
                                 @if (unit.topics?.length) {
                                 <ul class="space-y-0.5 ml-2">
-                                    @for (topic of unit.topics ?? []; track topic.id) {
+                                    @for (topic of unit.topics; track topic.id) {
                                     <li class="text-xs text-txt-secondary flex items-start gap-1.5">
                                         <span>•</span>
                                         <span>{{ topic.description }}</span>

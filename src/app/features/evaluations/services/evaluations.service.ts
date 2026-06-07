@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/api-response.model';
 import { PaginationParams } from '../../../shared/models/pagination.model';
-import { GetSimulationsResponse, GetSimulationsHistoryResponse, GetTestInfoResponse, StartAssessmentAttemptResponse, SubmitAssessmentRequest, SubmitAssessmentResponse, GetTestHistoryResponse, GetAttemptDetailResponse } from '../models/evaluations-response.model';
+import { GetSimulationsResponse, GetSimulationsHistoryResponse, GetTestInfoResponse, StartAssessmentAttemptResponse, SubmitAssessmentRequest, SubmitAssessmentResponse, GetTestHistoryResponse, GetAttemptDetailResponse, GetSimulationModesResponse, StartAssessmentAttemptSimulationResponse } from '../models/evaluations-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +31,19 @@ export class EvaluationsService {
     }
 
     return this.http.get<ApiResponse<GetSimulationsHistoryResponse>>(`${this.apiUrl}/simulations/history`, { params });
+  }
+
+  public getSimulationModes(assessmentId: number) {
+    return this.http.get<ApiResponse<GetSimulationModesResponse>>(
+      `${this.apiUrl}/simulations/${assessmentId}/available-modes`
+    );
+  }
+
+  public startSimulationAttempt(assessmentId: number, generationMode: string) {
+    return this.http.post<ApiResponse<StartAssessmentAttemptSimulationResponse>>(
+      `${this.apiUrl}/simulations/${assessmentId}/${generationMode}/start`,
+      null,
+    );
   }
 
   public getTestInfo(userLearningContextId: number, syllabusSlug: string, unitSlug?: string) {

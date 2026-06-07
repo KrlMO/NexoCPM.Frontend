@@ -155,3 +155,52 @@
         </div>
     </div>
 </div>
+
+@if (showModeModal) {
+<app-general-modal (cancel)="closeModeModal()">
+    <h3 class="text-xl font-bold text-txt-primary mb-2 pr-8">
+        {{ currentSimulation?.title ?? 'Iniciar simulacro' }}
+    </h3>
+
+    @if (isLoadingModes) {
+    <div class="text-center py-8">
+        <p class="text-txt-secondary">Cargando modos disponibles...</p>
+    </div>
+    } @else {
+    <p class="text-sm text-txt-secondary mb-6">Selecciona el modo de evaluación:</p>
+
+    <div class="flex flex-col gap-4">
+        @for (mode of modes; track mode) {
+            @let disabled = mode !== 'RANDOM' && !hasHistoricalData;
+            @let label = mode === 'RANDOM' ? 'Aleatorio'
+                : mode === 'BALANCED' ? 'Balanceado'
+                : 'Enfocado en debilidades';
+            @let desc = mode === 'RANDOM' ? 'Preguntas completamente al azar del temario.'
+                : mode === 'BALANCED' ? 'Preguntas balanceadas según tu rendimiento histórico.'
+                : 'Preguntas enfocadas en tus debilidades identificadas.';
+
+        <label
+            class="flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-40"
+            [class.border-primary]="selectedMode === mode && !disabled"
+            [class.border-border]="selectedMode !== mode || disabled"
+            [class.bg-primary/5]="selectedMode === mode && !disabled"
+            [class.opacity-40]="disabled"
+            [class.cursor-not-allowed]="disabled">
+            <input type="radio" name="mode" [value]="mode" [disabled]="disabled"
+                [(ngModel)]="selectedMode"
+                class="mt-1 shrink-0 accent-primary" />
+            <div class="flex flex-col">
+                <span class="font-semibold text-txt-primary text-sm">{{ label }}</span>
+                <span class="text-xs text-txt-secondary mt-0.5">{{ desc }}</span>
+            </div>
+        </label>
+        }
+    </div>
+
+    <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mt-6 [&>*]:w-full sm:[&>*]:w-auto">
+        <app-secondary-button label="Cancelar" variant="primary" (clicked)="closeModeModal()" />
+        <app-primary-button label="Iniciar simulacro" [disabled]="isLoadingModes" (clicked)="onStartWithMode()" />
+    </div>
+    }
+</app-general-modal>
+}
