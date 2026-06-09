@@ -124,6 +124,13 @@
                         </div>
                     </div>
 
+                    @if (resultData.starsEarned > 0) {
+                    <div class="text-center">
+                        <p class="text-sm text-txt-secondary mb-1">Estrellas obtenidas</p>
+                        <app-star-rating [rating]="resultData.starsEarned" />
+                    </div>
+                    }
+
                     @if (resultData.recommendations.length) {
                     <div>
                         <p class="text-sm font-semibold text-txt-primary mb-2">Recomendaciones</p>

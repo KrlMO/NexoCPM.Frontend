@@ -79,14 +79,48 @@
                     Recursos de la comunidad
                 </h4>
                 @if (resources.length) {
-                <ul class="space-y-2">
+                <ul class="space-y-3">
                     @for (resource of resources; track resource.id) {
-                    <li class="text-sm flex items-center justify-between gap-2">
-                        <span class="truncate">{{ resource.title }}</span>
-                        <a [href]="resource.url" target="_blank" rel="noopener noreferrer"
-                            class="shrink-0 font-medium underline-offset-2 hover:underline">
-                            Ver
-                        </a>
+                    <li class="text-sm border border-border/40 rounded-lg p-3 space-y-2 bg-white">
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="font-medium truncate">{{ resource.title }}</span>
+                            <a [href]="resource.url" target="_blank" rel="noopener noreferrer"
+                                class="shrink-0 font-medium underline-offset-2 hover:underline"
+                                (click)="trackView(resource)">
+                                Ver
+                            </a>
+                        </div>
+                        @if (resource.description) {
+                        <p class="text-xs opacity-70 line-clamp-2">{{ resource.description }}</p>
+                        }
+                        <div class="flex items-center gap-2 text-xs opacity-70 flex-wrap">
+                            <span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded">{{ getResourceTypeLabel(resource.type) }}</span>
+                            @if (resource.author) {
+                            <span>{{ resource.author }}</span>
+                            }
+                            @if (resource.sourceName) {
+                            <span>{{ resource.sourceName }}</span>
+                            }
+                            @if (resource.publishedAt) {
+                            <span>{{ resource.publishedAt | date:'dd/MM/yyyy' }}</span>
+                            }
+                        </div>
+                        <div class="flex items-center justify-between gap-3 text-xs">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    {{ resource.viewsCount }}
+                                </span>
+                                <button (click)="toggleLike(resource)" class="flex items-center gap-1 cursor-pointer transition-opacity hover:opacity-70">
+                                    <svg class="w-3.5 h-3.5" [attr.fill]="likedResourceIds.has(resource.id) ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                    {{ resource.likesCount }}
+                                </button>
+                            </div>
+                            <button (click)="goToUserProfile(resource.userCode)"
+                                class="font-medium underline-offset-2 hover:underline opacity-80 hover:opacity-100 transition-opacity">
+                                {{ resource.userFirstName }} {{ resource.userLastName }}
+                            </button>
+                        </div>
                     </li>
                     }
                 </ul>
@@ -107,12 +141,75 @@
                 </div>
                 }
 
+                @if (!showResourceForm) {
                 <button
                     class="mt-3 w-full text-xs font-medium py-1.5 rounded-lg transition text-white"
                     style="background-color: var(--color-resource-text);"
-                    (click)="cancel.emit()">
-                    + Añadir y compartir recurso 
+                    (click)="openResourceForm()">
+                    + Añadir y compartir recurso
                 </button>
+                } @else {
+                <div class="mt-3 space-y-3">
+                    <input
+                        type="text"
+                        placeholder="Título del recurso"
+                        [(ngModel)]="resourceForm.title"
+                        class="w-full text-sm px-3 py-2 rounded-lg border border-border bg-white text-txt-primary placeholder:text-txt-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                    <input
+                        type="url"
+                        placeholder="URL del recurso (https://...)"
+                        [(ngModel)]="resourceForm.url"
+                        class="w-full text-sm px-3 py-2 rounded-lg border border-border bg-white text-txt-primary placeholder:text-txt-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                    <select
+                        [(ngModel)]="resourceForm.type"
+                        class="w-full text-sm px-3 py-2 rounded-lg border border-border bg-white text-txt-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    >
+                        @for (t of resourceTypes; track t.value) {
+                        <option [value]="t.value">{{ t.label }}</option>
+                        }
+                    </select>
+                    <textarea
+                        placeholder="Descripción (opcional)"
+                        [(ngModel)]="resourceForm.description"
+                        rows="2"
+                        class="w-full text-sm px-3 py-2 rounded-lg border border-border bg-white text-txt-primary placeholder:text-txt-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+                    ></textarea>
+                    <input
+                        type="text"
+                        placeholder="Autor (opcional)"
+                        [(ngModel)]="resourceForm.author"
+                        class="w-full text-sm px-3 py-2 rounded-lg border border-border bg-white text-txt-primary placeholder:text-txt-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Nombre de la fuente (opcional)"
+                        [(ngModel)]="resourceForm.sourceName"
+                        class="w-full text-sm px-3 py-2 rounded-lg border border-border bg-white text-txt-primary placeholder:text-txt-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                    <input
+                        type="date"
+                        placeholder="Fecha de publicación (opcional)"
+                        [(ngModel)]="resourceForm.publishedAt"
+                        class="w-full text-sm px-3 py-2 rounded-lg border border-border bg-white text-txt-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                    <div class="flex gap-2">
+                        <app-primary-button
+                            label="Enviar"
+                            variant="primary"
+                            [disabled]="isCreatingResource"
+                            (clicked)="submitResource()"
+                        />
+                        <app-secondary-button
+                            label="Cancelar"
+                            variant="primary"
+                            [disabled]="isCreatingResource"
+                            (clicked)="closeResourceForm()"
+                        />
+                    </div>
+                </div>
+                }
             </div>
 
             <!-- Completion toggle — right column, always last -->

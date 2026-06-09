@@ -1,5 +1,9 @@
 import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { GeneralModal } from '../../../../shared/ui/modal/general-modal/general-modal';
+import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
 import { UsersService } from '../../../users/services/users.service';
 import { ResourcesService } from '../../../resources/services/resources.service';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
@@ -7,15 +11,16 @@ import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/s
 import { LoadSubtopicDetailResponse } from '../../../users/models/users-response.model';
 import { Resource } from '../../../resources/models/resource.model';
 import { ApiResponse } from '../../../../core/models/api-response.model';
-import { GetResourcesBySubtopicResponse } from '../../../resources/models/resources-response.model';
+import { CreateResourceRequest, GetResourcesBySubtopicResponse, ResourceContentType } from '../../../resources/models/resources-response.model';
 
 @Component({
   selector: 'app-subtopic-detail-modal',
-  imports: [GeneralModal, SecondaryButton],
+  imports: [GeneralModal, SecondaryButton, PrimaryButton, FormsModule, DatePipe],
   templateUrl: './subtopic-detail-modal.html',
   styleUrl: './subtopic-detail-modal.css',
 })
 export class SubtopicDetailModal implements OnInit, OnChanges {
+  private router = inject(Router);
   private usersService = inject(UsersService);
   private resourcesService = inject(ResourcesService);
   private toastService = inject(ToastService);
@@ -38,6 +43,29 @@ export class SubtopicDetailModal implements OnInit, OnChanges {
   resourcePage = 1;
   resourcePageSize = 4;
   resourceTotalPages = 0;
+  likedResourceIds = new Set<number>();
+  likeInFlight = new Set<number>();
+  viewingResourceIds = new Set<number>();
+
+  showResourceForm = false;
+  resourceForm: CreateResourceRequest = {
+    title: '',
+    url: '',
+    description: '',
+    subTopicId: 0,
+    author: '',
+    sourceName: '',
+    publishedAt: '',
+    type: ResourceContentType.Otros,
+  };
+  resourceTypes = Object.entries(ResourceContentType)
+    .filter(([key]) => isNaN(Number(key)))
+    .map(([label, value]) => ({ label, value: value as number }));
+  isCreatingResource = false;
+
+  getResourceTypeLabel(type: number): string {
+    return ResourceContentType[type] ?? 'Otros';
+  }
 
   get completed(): boolean {
     return this.subtopicDetail()?.subTopicDetail?.items?.[0]?.isCompleted ?? false;
@@ -123,13 +151,101 @@ export class SubtopicDetailModal implements OnInit, OnChanges {
   private loadResources(subtopicId: number) {
     this.resourcesService.getResourcesBySubtopic(subtopicId, this.resourcePage, this.resourcePageSize).subscribe({
       next: (res: ApiResponse<GetResourcesBySubtopicResponse>) => {
-        this.resources = res.data?.resources?.items ?? [];
+        const items = res.data?.resources?.items ?? [];
+        this.resources = items;
         this.resourceTotalPages = res.data?.resources?.totalPages ?? 0;
+        this.likedResourceIds = new Set(items.filter(r => r.isLiked).map(r => r.id));
       },
       error: () => {
         this.toastService.error('Error al cargar los recursos.');
       },
     });
+  }
+
+  toggleLike(resource: Resource) {
+    if (this.likeInFlight.has(resource.id)) return;
+    this.likeInFlight.add(resource.id);
+    const wasLiked = this.likedResourceIds.has(resource.id);
+    if (wasLiked) {
+      this.likedResourceIds.delete(resource.id);
+      resource.likesCount--;
+    } else {
+      this.likedResourceIds.add(resource.id);
+      resource.likesCount++;
+    }
+    this.resourcesService.likeResource(resource.id).subscribe({
+      next: (res) => {
+        this.likeInFlight.delete(resource.id);
+        if (res.success && res.data) {
+          resource.likesCount = res.data.likesCount;
+          if (res.data.liked) this.likedResourceIds.add(resource.id);
+          else this.likedResourceIds.delete(resource.id);
+        }
+      },
+      error: () => {
+        this.likeInFlight.delete(resource.id);
+        if (wasLiked) {
+          this.likedResourceIds.add(resource.id);
+          resource.likesCount++;
+        } else {
+          this.likedResourceIds.delete(resource.id);
+          resource.likesCount--;
+        }
+      },
+    });
+  }
+
+  trackView(resource: Resource) {
+    if (this.viewingResourceIds.has(resource.id)) return;
+    this.viewingResourceIds.add(resource.id);
+    resource.viewsCount++;
+    this.resourcesService.viewResource(resource.id).subscribe({
+      error: () => { resource.viewsCount--; },
+    });
+  }
+
+  openResourceForm() {
+    const subtopicId = this.subtopicDetail()?.subTopicDetail?.items?.[0]?.subTopic?.id;
+    if (!subtopicId) return;
+    this.resourceForm = {
+      title: '', url: '', description: '', subTopicId: subtopicId,
+      author: '', sourceName: '', publishedAt: '', type: ResourceContentType.Otros,
+    };
+    this.showResourceForm = true;
+  }
+
+  closeResourceForm() {
+    this.showResourceForm = false;
+  }
+
+  submitResource() {
+    if (!this.resourceForm.title.trim() || !this.resourceForm.url.trim()) {
+      this.toastService.error('El título y la URL son obligatorios.');
+      return;
+    }
+    this.isCreatingResource = true;
+    this.resourcesService.createResource(this.resourceForm).subscribe({
+      next: (res) => {
+        this.isCreatingResource = false;
+        if (res.success) {
+          this.toastService.success('Recurso registrado correctamente y está en proceso de aprobación pública.');
+          this.showResourceForm = false;
+          const subtopicId = this.resourceForm.subTopicId;
+          this.resourcePage = 1;
+          if (subtopicId) this.loadResources(subtopicId);
+        } else {
+          this.toastService.error(res.message || 'Error al registrar el recurso.');
+        }
+      },
+      error: () => {
+        this.isCreatingResource = false;
+        this.toastService.error('Error al registrar el recurso.');
+      },
+    });
+  }
+
+  goToUserProfile(code: string) {
+    this.router.navigate(['/users/public-profile', code.toLowerCase()]);
   }
 
   previousPage() {

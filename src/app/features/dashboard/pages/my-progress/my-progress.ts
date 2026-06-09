@@ -1,4 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChartTooltipItem } from '../../../../shared/ui/line-chart/line-chart';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
 import { Card } from '../../../../shared/ui/card/card';
 import { ProgressBar } from '../../../../shared/ui/progress-bar/progress-bar';
@@ -15,7 +17,7 @@ import {
 
 @Component({
   selector: 'app-my-progress',
-  imports: [PrimaryButton, Card, ProgressBar, LineChart],
+  imports: [PrimaryButton, Card, ProgressBar, LineChart, DatePipe],
   templateUrl: './my-progress.html',
   styleUrl: './my-progress.css',
 })
@@ -29,6 +31,7 @@ export class MyProgress implements OnInit {
   public unitDetails: UnitDetailsResponse | null = null;
   public chartLabels: string[] = [];
   public chartValues: number[] = [];
+  public chartTooltipData: ChartTooltipItem[] = [];
   public isLoadingDetails = false;
 
   ngOnInit() {
@@ -58,13 +61,20 @@ export class MyProgress implements OnInit {
       const d = new Date(s.finishedAt);
       return d.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
     });
-    this.chartValues = sims.map((s) =>
-      Math.round((s.score / s.totalQuestions) * 100)
-    );
+    this.chartValues = sims.map((s) => s.score);
+    this.chartTooltipData = sims.map((s) => ({
+      assessmentTitle: s.assessmentTitle,
+      score: s.score,
+      totalQuestions: s.totalQuestions,
+      finishedAt: s.finishedAt,
+    }));
   }
 
   public selectSyllabus(syllabus: SyllabusProgressItem) {
-    if (this.selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug) {
+    if (
+      this.selectedSyllabus?.userLearningContextId === syllabus.userLearningContextId &&
+      this.selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug
+    ) {
       this.selectedSyllabus = null;
       this.unitDetails = null;
       return;
@@ -97,5 +107,11 @@ export class MyProgress implements OnInit {
 
   public goToMySyllabi() {
     this.router.navigate(['/app/my-syllabi']);
+  }
+
+  public recommendationUrl(rec: { subtopicSlug: string }): string {
+    const ctx = this.selectedSyllabus;
+    if (!ctx) return '#';
+    return `/app/my-syllabi/${ctx.userLearningContextId}/${ctx.syllabusSlug}?subtopic=${rec.subtopicSlug}`;
   }
 }

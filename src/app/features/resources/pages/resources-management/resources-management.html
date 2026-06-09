@@ -1,0 +1,164 @@
+<div class="bg-background min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+
+    <div class="bg-surface border border-border rounded-xl shadow-sm p-6">
+
+      <h1 class="text-2xl font-bold text-txt-primary mb-6">Gestión de Recursos</h1>
+
+      <!-- Tabs -->
+      <div class="flex gap-1 border-b border-border mb-6">
+        <button
+          (click)="setTab('pending')"
+          class="px-4 py-2.5 text-sm font-medium transition cursor-pointer border-b-2 -mb-px"
+          [class.border-primary]="activeTab === 'pending'"
+          [class.border-transparent]="activeTab !== 'pending'"
+          [class.text-primary]="activeTab === 'pending'"
+          [class.text-txt-secondary]="activeTab !== 'pending'"
+        >
+          Pendientes
+        </button>
+        <button
+          (click)="setTab('approved')"
+          class="px-4 py-2.5 text-sm font-medium transition cursor-pointer border-b-2 -mb-px"
+          [class.border-primary]="activeTab === 'approved'"
+          [class.border-transparent]="activeTab !== 'approved'"
+          [class.text-primary]="activeTab === 'approved'"
+          [class.text-txt-secondary]="activeTab !== 'approved'"
+        >
+          Aprobados
+        </button>
+        <button
+          (click)="setTab('rejected')"
+          class="px-4 py-2.5 text-sm font-medium transition cursor-pointer border-b-2 -mb-px"
+          [class.border-primary]="activeTab === 'rejected'"
+          [class.border-transparent]="activeTab !== 'rejected'"
+          [class.text-primary]="activeTab === 'rejected'"
+          [class.text-txt-secondary]="activeTab !== 'rejected'"
+        >
+          Descartados
+        </button>
+      </div>
+
+      <!-- Search + Sort (only for pending tab) -->
+      @if (activeTab === 'pending') {
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+          <div class="relative flex-1">
+            <input
+              type="text"
+              placeholder="Buscar por título o autor..."
+              [(ngModel)]="searchQuery"
+              class="w-full pl-4 pr-10 py-2.5 text-sm border border-border rounded-lg bg-background text-txt-primary placeholder:text-txt-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
+            />
+            <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-secondary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <select
+            [(ngModel)]="sortOrder"
+            (change)="setSortOrder(sortOrder)"
+            class="px-3 py-2.5 text-sm border border-border rounded-lg bg-background text-txt-primary focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition cursor-pointer"
+          >
+            <option value="desc">Más reciente</option>
+            <option value="asc">Más antiguo</option>
+          </select>
+        </div>
+      }
+
+      <!-- Pending tab content -->
+      @if (activeTab === 'pending') {
+        @if (isLoading) {
+          <div class="text-center py-12 text-txt-secondary text-sm">Cargando recursos...</div>
+        } @else if (filteredResources.length === 0) {
+          <div class="text-center py-12 text-txt-secondary text-sm">No hay recursos pendientes.</div>
+        } @else {
+          <div class="space-y-3">
+            @for (resource of filteredResources; track resource.id) {
+              <div class="flex items-start gap-4 p-4 border border-border rounded-lg bg-background">
+                <div class="flex-1 min-w-0">
+                  <a
+                    [href]="resource.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-sm font-semibold text-primary hover:underline break-words"
+                  >
+                    {{ resource.title }}
+                  </a>
+                  @if (resource.description) {
+                    <p class="text-xs text-txt-secondary mt-1 line-clamp-2">{{ resource.description }}</p>
+                  }
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-txt-secondary">
+                    <span>{{ resource.userFirstName }} {{ resource.userLastName }}</span>
+                    @if (resource.sourceName) {
+                      <span>{{ resource.sourceName }}</span>
+                    }
+                    <span>{{ resource.createdAt | date:'dd/MM/yyyy' }}</span>
+                    <span>{{ resource.likesCount }} likes · {{ resource.viewsCount }} vistas</span>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 shrink-0">
+                  <button
+                    (click)="approve(resource)"
+                    [disabled]="isToggling.has(resource.id)"
+                    class="px-4 py-1.5 text-xs font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg transition cursor-pointer"
+                  >
+                    {{ isToggling.has(resource.id) ? '...' : 'Aprobar' }}
+                  </button>
+                  <button
+                    (click)="reject(resource)"
+                    [disabled]="isToggling.has(resource.id)"
+                    class="px-4 py-1.5 text-xs font-medium text-white bg-danger hover:bg-red-700 disabled:opacity-50 rounded-lg transition cursor-pointer"
+                  >
+                    {{ isToggling.has(resource.id) ? '...' : 'Descartar' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Pagination -->
+          @if (totalPages > 1) {
+            <div class="flex items-center justify-center gap-2 mt-6">
+              <button
+                (click)="goToPage(currentPage - 1)"
+                [disabled]="currentPage <= 1"
+                class="px-3 py-1.5 text-xs font-medium border border-border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                Anterior
+              </button>
+              @for (p of [].constructor(totalPages); track $index) {
+                <button
+                  (click)="goToPage($index + 1)"
+                  class="px-3 py-1.5 text-xs font-medium rounded-lg transition cursor-pointer"
+                  [class.bg-primary]="$index + 1 === currentPage"
+                  [class.text-white]="$index + 1 === currentPage"
+                  [class.border]="$index + 1 !== currentPage"
+                  [class.border-border]="$index + 1 !== currentPage"
+                  [class.hover:bg-gray-50]="$index + 1 !== currentPage"
+                >
+                  {{ $index + 1 }}
+                </button>
+              }
+              <button
+                (click)="goToPage(currentPage + 1)"
+                [disabled]="currentPage >= totalPages"
+                class="px-3 py-1.5 text-xs font-medium border border-border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                Siguiente
+              </button>
+            </div>
+          }
+        }
+      }
+
+      <!-- Placeholder for other tabs -->
+      @if (activeTab === 'approved') {
+        <div class="text-center py-12 text-txt-secondary text-sm">Próximamente: recursos aprobados.</div>
+      }
+      @if (activeTab === 'rejected') {
+        <div class="text-center py-12 text-txt-secondary text-sm">Próximamente: recursos descartados.</div>
+      }
+
+    </div>
+  </div>
+</div>

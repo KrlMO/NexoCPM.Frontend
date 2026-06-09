@@ -70,14 +70,14 @@
       <app-card>
         <h2 class="text-lg font-semibold text-txt-primary mb-5">Progreso de Temarios</h2>
         <div class="space-y-3">
-          @for (syllabus of mainDashboard!.syllabiProgress; track syllabus.syllabusSlug) {
+          @for (syllabus of mainDashboard!.syllabiProgress; track syllabus.userLearningContextId + ':' + syllabus.syllabusSlug) {
           <div
             class="rounded-lg p-4 cursor-pointer transition-all duration-200 border"
-            [class.bg-primary/5]="selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
-            [class.bg-surface]="selectedSyllabus?.syllabusSlug !== syllabus.syllabusSlug"
-            [class.border-primary]="selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
-            [class.border-border]="selectedSyllabus?.syllabusSlug !== syllabus.syllabusSlug"
-            [class.shadow-md]="selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
+            [class.bg-primary/5]="selectedSyllabus?.userLearningContextId === syllabus.userLearningContextId && selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
+            [class.bg-surface]="selectedSyllabus?.userLearningContextId !== syllabus.userLearningContextId || selectedSyllabus?.syllabusSlug !== syllabus.syllabusSlug"
+            [class.border-primary]="selectedSyllabus?.userLearningContextId === syllabus.userLearningContextId && selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
+            [class.border-border]="selectedSyllabus?.userLearningContextId !== syllabus.userLearningContextId || selectedSyllabus?.syllabusSlug !== syllabus.syllabusSlug"
+            [class.shadow-md]="selectedSyllabus?.userLearningContextId === syllabus.userLearningContextId && selectedSyllabus?.syllabusSlug === syllabus.syllabusSlug"
             (click)="selectSyllabus(syllabus)"
           >
             <div class="flex items-center justify-between mb-2">
@@ -133,11 +133,14 @@
           @if (unitDetails.recommendations.length) {
           <ul class="space-y-3">
             @for (rec of unitDetails.recommendations; track rec.subtopicSlug) {
-            <li class="flex items-start gap-2 text-sm text-txt-primary">
-              <span
-                class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"
-              ></span>
-              <span>{{ rec.message }}</span>
+            <li>
+              <a [href]="recommendationUrl(rec)" target="_blank" rel="noopener noreferrer"
+                class="flex items-start gap-2 text-sm text-txt-primary hover:text-primary transition-colors no-underline group">
+                <span
+                  class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0 group-hover:scale-125 transition-transform"
+                ></span>
+                <span class="underline-offset-2 group-hover:underline">{{ rec.message }}</span>
+              </a>
             </li>
             }
           </ul>
@@ -150,6 +153,43 @@
     </section>
     }
 
+    <!-- Last Tests -->
+    @if (mainDashboard?.lastTests?.length) {
+    <section class="mb-8">
+      <app-card>
+        <h3 class="text-lg font-semibold text-txt-primary mb-5">&Uacute;ltimas pruebas</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead>
+              <tr class="border-b border-border text-txt-secondary">
+                <th class="pb-2 font-medium">Nombre</th>
+                <th class="pb-2 font-medium">Fecha</th>
+                <th class="pb-2 font-medium">Puntaje</th>
+                <th class="pb-2 font-medium">Preguntas</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (test of mainDashboard!.lastTests; track test.attemptId) {
+              <tr class="border-b border-border/50 last:border-b-0">
+                <td class="py-2.5 text-txt-primary font-medium">{{ test.assessmentTitle }}</td>
+                <td class="py-2.5 text-txt-secondary">{{ test.finishedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="py-2.5">
+                  <span class="font-semibold"
+                    [class.text-green-600]="test.score >= 60"
+                    [class.text-red-600]="test.score < 60">
+                    {{ test.score }}%
+                  </span>
+                </td>
+                <td class="py-2.5 text-txt-primary">{{ test.totalQuestions }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </section>
+    }
+
     <!-- Line Chart: Last 5 Simulations -->
     @if (chartLabels.length) {
     <section class="mb-8">
@@ -157,7 +197,7 @@
         <h3 class="text-lg font-semibold text-txt-primary mb-5">
           Rendimiento en los &uacute;ltimos 5 simulacros
         </h3>
-        <app-line-chart [labels]="chartLabels" [values]="chartValues" />
+        <app-line-chart [labels]="chartLabels" [values]="chartValues" [tooltipData]="chartTooltipData" />
       </app-card>
     </section>
     }

@@ -117,6 +117,7 @@
                                 <p class="font-semibold text-txt-primary text-sm">Prueba de unidad</p>
                                 <p class="text-xs text-txt-secondary mt-0.5">Evalúa lo aprendido en esta unidad.</p>
                             </div>
+                            <!--
                             <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"
                                 [class.bg-green-100]="unit.unitTest.status === 'APPROVED'"
                                 [class.text-green-700]="unit.unitTest.status === 'APPROVED'"
@@ -126,6 +127,7 @@
                                 [class.text-gray-600]="unit.unitTest.status === 'NOT_STARTED'">
                                 {{ getTestStatusLabel(unit.unitTest.status) }}
                             </span>
+                            -->
                             <app-primary-button [label]="getTestButtonLabel(unit.unitTest.status)"
                                 (clicked)="goToTest(unit.unitTest!)" />
                         </div>
@@ -144,6 +146,7 @@
                             <p class="font-semibold text-txt-primary">Prueba final del temario</p>
                             <p class="text-sm text-txt-secondary mt-0.5">Evalúa todos los conocimientos del temario.</p>
                         </div>
+                        <!--
                         <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0"
                             [class.bg-green-100]="syllabus.finalSyllabusTest.status === 'APPROVED'"
                             [class.text-green-700]="syllabus.finalSyllabusTest.status === 'APPROVED'"
@@ -153,6 +156,7 @@
                             [class.text-gray-600]="syllabus.finalSyllabusTest.status === 'NOT_STARTED'">
                             {{ getTestStatusLabel(syllabus.finalSyllabusTest.status) }}
                         </span>
+                        -->
                         <app-primary-button [label]="getTestButtonLabel(syllabus.finalSyllabusTest.status)"
                             (clicked)="goToTest(syllabus.finalSyllabusTest!)" />
                     </div>

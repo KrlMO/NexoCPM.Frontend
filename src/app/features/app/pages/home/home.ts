@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Card } from '../../../../shared/ui/card/card';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
 import { Router, RouterLink } from '@angular/router';
@@ -27,6 +28,7 @@ import { ConfirmModal } from '../../../../shared/ui/modal/confirm-modal/confirm-
     StarRating,
     RouterLink,
     ConfirmModal,
+    DatePipe,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',
@@ -191,5 +193,13 @@ export class Home implements OnInit {
     this.pendingSyllabusSlug = '';
     this.pendingSyllabusName = '';
     this.existingContextId = undefined;
+  }
+
+  public startFirstSimulation() {
+    if (!this.auth.isAuthenticated()) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+    this.router.navigate(['/app/evaluations/simulations']);
   }
 }

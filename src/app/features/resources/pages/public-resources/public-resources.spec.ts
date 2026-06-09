@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AppLayout } from './app-layout';
+import { PublicResources } from './public-resources';
 
-describe('AppLayout', () => {
-  let component: AppLayout;
-  let fixture: ComponentFixture<AppLayout>;
+describe('PublicResources', () => {
+  let component: PublicResources;
+  let fixture: ComponentFixture<PublicResources>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppLayout]
+      imports: [PublicResources]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppLayout);
+    fixture = TestBed.createComponent(PublicResources);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

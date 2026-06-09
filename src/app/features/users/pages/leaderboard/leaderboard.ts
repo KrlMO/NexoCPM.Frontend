@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { UsersService } from '../../services/users.service';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { LeaderboardEntry } from '../../models/leaderboard.model';
@@ -12,6 +13,7 @@ import { Star } from '../../../../shared/ui/star/star';
   styleUrl: './leaderboard.css',
 })
 export class Leaderboard implements OnInit {
+  private router = inject(Router);
   private usersService = inject(UsersService);
   private toastService = inject(ToastService);
 
@@ -40,5 +42,9 @@ export class Leaderboard implements OnInit {
 
   getInitials(name: string, lastName: string): string {
     return `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  }
+
+  goToProfile(code: string) {
+    this.router.navigate(['/users/public-profile', code.toLowerCase()]);
   }
 }

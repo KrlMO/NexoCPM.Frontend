@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PrimaryButton } from '../../../../shared/ui/button/primary-button/primary-button';
 import { SecondaryButton } from '../../../../shared/ui/button/secondary-button/secondary-button';
 import { GeneralModal } from '../../../../shared/ui/modal/general-modal/general-modal';
+import { StarRating } from '../../../../shared/ui/star-rating/star-rating';
 import { ToastService } from '../../../../shared/ui/toast/toast.service';
 import { EvaluationsService } from '../../services/evaluations.service';
 import {
@@ -14,7 +15,7 @@ import {
 
 @Component({
   selector: 'app-simulation-attempt',
-  imports: [PrimaryButton, SecondaryButton, GeneralModal],
+  imports: [PrimaryButton, SecondaryButton, GeneralModal, StarRating],
   templateUrl: './simulation-attempt.html',
   styleUrl: './simulation-attempt.css',
 })
@@ -196,16 +197,7 @@ export class SimulationAttempt implements OnInit, OnDestroy {
       selectedOptionId: this.selectedOptions[q.questionId],
     }));
     this.evaluationsService
-      .submitAssessmentAttempt(
-        0,
-        this.attemptData.assessmentId,
-        this.attemptData.attemptId,
-        {
-          syllabusSlug: '',
-          unitSlug: null,
-          answers,
-        },
-      )
+      .submitSimulationAttempt(this.attemptData.attemptId, answers)
       .subscribe({
         next: res => {
           this.resultData = res.data ?? null;

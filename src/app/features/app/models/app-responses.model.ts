@@ -10,7 +10,7 @@ export interface GetDashboardResponse {
     progressPercentage: number;
     activeSyllabus: SyllabusDashboard[];
     lastSyllabus: SyllabusDashboard | null;
-    recommendations: string[];
+    recomendations: string[];
     lastSimulations: SimulationDashboard[];
     totalSyllabus: number;
     userHasInfo: boolean;

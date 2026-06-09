@@ -20,7 +20,7 @@
                             </div>
                             <div>
                                 <span class="text-xs uppercase tracking-wider text-txt-secondary font-medium">Nivel</span>
-                                <p class="font-semibold text-txt-primary mt-0.5">{{ lastLevelName }}</p>
+                                <p class="font-semibold text-txt-primary mt-0.5 text-justify">{{ lastLevelName }}</p>
                             </div>
                             <div>
                                 <span class="text-xs uppercase tracking-wider text-txt-secondary font-medium">Especialidad</span>
@@ -49,7 +49,7 @@
                     Comienza tu preparación y da el primer paso hacia tu éxito.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <app-primary-button label="Iniciar primer simulacro" variant="pink" />
+                    <app-primary-button label="Iniciar primer simulacro" variant="pink" (clicked)="startFirstSimulation()" />
                     <app-primary-button label="Explorar temarios" variant="primary" (clicked)="goToSyllabi()" />
                 </div>
             </div>
@@ -90,8 +90,8 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl md:text-3xl font-bold text-txt-primary">Temarios activos</h2>
-                @if ((userDashboard?.totalSyllabus ?? 0) > 3) {
-                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/me/syllabi">
+                @if ((userDashboard?.totalSyllabus ?? 0) >= 3) {
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/my-syllabi">
                     Ver todos &rarr;
                 </a>
                 }
@@ -152,22 +152,22 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl md:text-3xl font-bold text-txt-primary">Recomendaciones del día</h2>
-                @if ((userDashboard?.recommendations?.length ?? 0) > 3) {
-                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/me/recommendations">
+                @if ((userDashboard?.recomendations?.length ?? 0) >= 3) {
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/my-progress">
                     Ver más &rarr;
                 </a>
                 }
             </div>
-            @if ((userDashboard?.recommendations?.length ?? 0) > 0) {
+            @if ((userDashboard?.recomendations?.length ?? 0) > 0) {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @for (recommendation of (userDashboard?.recommendations ?? []); track $index) {
+                @for (recommendation of (userDashboard?.recomendations ?? []); track $index) {
                 <div class="bg-surface border border-border rounded-lg shadow-sm p-4 flex items-start gap-3 hover:shadow-md transition-shadow">
                     <span class="w-2 h-2 rounded-full bg-primary shrink-0 mt-2"></span>
                     <p class="text-txt-secondary text-sm leading-relaxed">{{ recommendation }}</p>
                 </div>
                 }
             </div>
-            @if ((userDashboard?.recommendations?.length ?? 0) > 3) {
+            @if ((userDashboard?.recomendations?.length ?? 0) > 3) {
             <div class="text-center mt-6 sm:hidden">
                 <a class="text-primary hover:text-primary-dark transition font-medium text-sm" routerLink="/app/me/recommendations">
                     Ver más &rarr;
@@ -189,7 +189,7 @@
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl md:text-3xl font-bold text-txt-primary">Últimos simulacros</h2>
                 @if ((userDashboard?.totalSimulations ?? 0) > 2) {
-                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/me/simulations">
+                <a class="text-primary hover:text-primary-dark transition font-medium text-sm hidden sm:inline" routerLink="/app/evaluations/simulations">
                     Ver todos &rarr;
                 </a>
                 }
@@ -203,7 +203,7 @@
                             {{ simulation.modalityName }}
                         </h3>
                         <p class="text-sm text-txt-secondary mb-4">
-                            {{ simulation.levelName }} · {{ simulation.specialityName }}
+                            <span class="text-justify">{{ simulation.levelname }} · {{ simulation.specialityName }}</span>
                         </p>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-4 text-sm">
                             <div>
@@ -220,11 +220,11 @@
                             </div>
                             <div>
                                 <span class="text-txt-secondary block text-xs">Fecha</span>
-                                <span class="font-semibold text-txt-primary">{{ simulation.finishedAt }}</span>
+                                <span class="font-semibold text-txt-primary">{{ simulation.finishedAt | date:'dd/MM/yyyy HH:mm' }}</span>
                             </div>
                         </div>
                         <div class="mt-auto">
-                            <app-star-rating [rating]="simulation.starEarned" [max]="5" />
+                            <app-star-rating [rating]="simulation.starsEarned" [max]="5" />
                         </div>
                     </div>
                 </app-card>
@@ -261,7 +261,7 @@
                         Accede a temarios, simulacros y herramientas diseñadas para tu éxito.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                        <app-primary-button label="Iniciar primer simulacro" variant="pink" />
+                        <app-primary-button label="Iniciar primer simulacro" variant="pink" (clicked)="startFirstSimulation()" />
                         <app-primary-button label="Explorar temarios" variant="primary" (clicked)="goToSyllabi()" />
                     </div>
                 </div>
@@ -318,7 +318,7 @@
             <div class="text-center py-16 bg-surface border border-border rounded-xl max-w-2xl mx-auto">
                 <p class="text-xl font-semibold text-txt-primary mb-2">Aún no tienes simulacros realizados</p>
                 <p class="text-txt-secondary mb-6">Realiza tu primer intento para ver tu progreso</p>
-                <app-primary-button label="Realizar primer simulacro" variant="pink" />
+                <app-primary-button label="Realizar primer simulacro" variant="pink" (clicked)="startFirstSimulation()"/>
             </div>
         </div>
     </section>

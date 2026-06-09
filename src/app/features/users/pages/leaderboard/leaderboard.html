@@ -27,7 +27,7 @@
             </thead>
             <tbody>
               @for (entry of entries; track entry.userId) {
-                <tr class="border-b border-border/50 hover:bg-gray-50 transition-colors">
+                <tr class="border-b border-border/50 hover:bg-gray-50 transition-colors cursor-pointer" (click)="goToProfile(entry.code)">
                   <td class="py-3 px-2">
                     @if (entry.rank === 1) {
                       <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-700 font-bold text-sm">1</span>

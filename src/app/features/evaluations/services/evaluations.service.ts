@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../../../core/config/api.config';
 import { ApiResponse } from '../../../core/models/api-response.model';
 import { PaginationParams } from '../../../shared/models/pagination.model';
-import { GetSimulationsResponse, GetSimulationsHistoryResponse, GetTestInfoResponse, StartAssessmentAttemptResponse, SubmitAssessmentRequest, SubmitAssessmentResponse, GetTestHistoryResponse, GetAttemptDetailResponse, GetSimulationModesResponse, StartAssessmentAttemptSimulationResponse } from '../models/evaluations-response.model';
+import { GetSimulationsResponse, GetSimulationsHistoryResponse, GetTestInfoResponse, StartAssessmentAttemptResponse, SubmitAssessmentRequest, SubmitAssessmentResponse, GetTestHistoryResponse, GetAttemptDetailResponse, GetSimulationModesResponse, StartAssessmentAttemptSimulationResponse, AnswerDto } from '../models/evaluations-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -74,6 +74,13 @@ export class EvaluationsService {
   public getAttemptDetail(userLearningContextId: number, attemptId: number) {
     return this.http.get<ApiResponse<GetAttemptDetailResponse>>(
       `${this.apiUrl}/${userLearningContextId}/attempts/${attemptId}/detail`,
+    );
+  }
+
+  public submitSimulationAttempt(attemptId: number, answers: AnswerDto[]) {
+    return this.http.post<ApiResponse<SubmitAssessmentResponse>>(
+      `${this.apiUrl}/simulations/attempts/${attemptId}/submit`,
+      { answers },
     );
   }
 

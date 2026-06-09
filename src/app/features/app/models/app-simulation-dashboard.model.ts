@@ -1,12 +1,15 @@
 export interface SimulationDashboard {
+    attemptId: number;
+    assessmentId: number;
+    assessmentTitle: string;
     modalityName: string;
-    levelName: string;
+    levelname: string;
     specialityName: string;
-    finishedAt: Date;
+    finishedAt: string;
     score: number;
     totalQuestions: number;
     correctAnswers: number;
     durationMinutes: number;
-    starEarned: number;
+    starsEarned: number;
     type: 'simulation' | 'test';
 }

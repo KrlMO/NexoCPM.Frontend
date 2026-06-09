@@ -133,6 +133,8 @@ export class SyllabusDetail implements OnInit {
       IN_PROGRESS: 'EN PROCESO',
       FINISHED: 'TERMINADO',
       COMPLETED: 'COMPLETADO',
+      APPROVED: 'APROBADO',
+      LOCKED: 'NO INICIADO',
     };
     return map[status] ?? 'NO INICIADO';
   }
@@ -142,6 +144,8 @@ export class SyllabusDetail implements OnInit {
       IN_PROGRESS: 'badge-amber',
       FINISHED: 'badge-green',
       COMPLETED: 'badge-green',
+      APPROVED: 'badge-green',
+      LOCKED: 'badge-gray',
     };
     return map[status] ?? 'badge-gray';
   }

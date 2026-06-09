@@ -109,6 +109,10 @@ export const routes: Routes = [
             {
                 path: 'ranking',
                 loadComponent: () => import('./features/users/pages/leaderboard/leaderboard').then(m => m.Leaderboard)
+            },
+            {
+                path: 'resources-management',
+                loadComponent: () => import('./features/resources/pages/resources-management/resources-management').then(m => m.ResourcesManagement)
             }
         ]
     },
