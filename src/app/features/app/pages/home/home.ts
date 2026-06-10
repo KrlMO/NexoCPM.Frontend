@@ -85,7 +85,6 @@ export class Home implements OnInit {
   public getFeaturedSyllabus() {
     this.appService.getFeaturedSyllabus().subscribe({
       next: (res: ApiResponse<GetFeaturedSyllabusResponse>) => {
-        debugger
         if (res.success && res.data) {
           this.availableSyllabus = res.data.featuredSyllabus;
         }
@@ -126,7 +125,6 @@ export class Home implements OnInit {
     this.usersService.hasCurrentSyllabus(syllabus.slug).subscribe({
       next: (res: ApiResponse<HasCurrentSyllabusResponse>) => {
         if (res.success && res.data?.hasCurrent) {
-          debugger
           this.existingContextId = res.data.userLearningContextId;
           this.modalMode = 'alreadyStarted';
         } else {
@@ -157,7 +155,6 @@ export class Home implements OnInit {
       next: (res: ApiResponse<StartSyllabusResponse>) => {
         this.isStarting = false;
         if (res.success && res.data?.userSyllabus) {
-          debugger
           const userSyllabus = res.data.userSyllabus;
           const learningContextId = res.data.userLearningContextId ?? userSyllabus.userLearningContextId;
           this.toastService.success(`Temario "${this.pendingSyllabusName}" iniciado correctamente.`);

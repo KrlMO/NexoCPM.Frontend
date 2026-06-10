@@ -161,7 +161,6 @@ export class Syllabi implements OnInit {
     this.usersService.hasCurrentSyllabus(syllabus.slug).subscribe({
       next: (res: ApiResponse<HasCurrentSyllabusResponse>) => {
         if (res.success && res.data?.hasCurrent) {
-          debugger
           this.existingContextId = res.data.userLearningContextId;
           this.modalMode = 'alreadyStarted';
         } else {
