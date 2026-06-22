@@ -30,6 +30,7 @@ export interface AttemptQuestionDto {
     questionId: number;
     statement: string;
     orderIndex: number;
+    code: string;
     contextBlocks: QuestionContentBlockDto[];
     options: AttemptOptionDto[];
 }
@@ -137,6 +138,7 @@ export interface AttemptQuestionDetailDto {
     questionId: number;
     statement: string;
     orderIndex: number;
+    code: string;
     selectedOptionId?: number;
     correctOptionId?: number;
     isCorrect: boolean;

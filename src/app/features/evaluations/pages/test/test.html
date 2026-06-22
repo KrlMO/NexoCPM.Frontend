@@ -241,6 +241,9 @@
                                 } @else {
                                 <span class="text-red-600 font-semibold ml-2">✗ Incorrecta</span>
                                 }
+                                @if (currentDetailQuestion.code) {
+                                <span class="text-xs text-txt-secondary/60 ml-2">Código: {{ currentDetailQuestion.code }}</span>
+                                }
                             </p>
                             <p class="text-base font-semibold text-txt-primary leading-relaxed">
                                 {{ currentDetailQuestion.statement }}
@@ -407,6 +410,9 @@
                         <div>
                             <p class="text-sm text-txt-secondary font-medium mb-1">
                                 Pregunta {{ currentIndex + 1 }}
+                                @if (currentQuestion.code) {
+                                <span class="text-xs text-txt-secondary/60 ml-2">Código: {{ currentQuestion.code }}</span>
+                                }
                             </p>
                             <p class="text-base font-semibold text-txt-primary leading-relaxed">
                                 {{ currentQuestion.statement }}

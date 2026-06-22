@@ -12,4 +12,17 @@ export class MainInput {
   @Input() type: string = 'text';
   @Input() label: string = '';
   @Input() control: FormControl = new FormControl('');
+
+  showPassword = false;
+
+  get inputType(): string {
+    if (this.type === 'password' && this.showPassword) {
+      return 'text';
+    }
+    return this.type;
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 }

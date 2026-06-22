@@ -211,6 +211,10 @@ export class Syllabi implements OnInit {
     this.existingContextId = undefined;
   }
 
+  public goToMySyllabi() {
+    this.router.navigate(['/app/my-syllabi']);
+  }
+
   public cancelStart() {
     this.modalMode = 'none';
     this.pendingSyllabusSlug = '';
