@@ -193,7 +193,11 @@
                             @if (block.title) {
                             <p class="text-sm font-semibold text-txt-primary">{{ block.title }}</p>
                             }
+                            @if (block.type === 'IMAGE') {
+                            <img [src]="block.content" class="max-w-full h-auto rounded" alt="Imagen de referencia" />
+                            } @else {
                             <div class="text-sm text-txt-primary leading-relaxed whitespace-pre-line">{{ block.content }}</div>
+                            }
                             @if (block.sourceText) {
                             <p class="text-xs text-txt-secondary italic mt-1">Fuente: {{ block.sourceText }}</p>
                             }
@@ -233,7 +237,11 @@
                                     </span>
                                     <div class="space-y-1">
                                         @for (b of opt.blocks; track b.id) {
+                                        @if (b.type === 'IMAGE') {
+                                        <img [src]="b.content" class="max-w-full h-auto rounded" alt="Opción" />
+                                        } @else {
                                         <p class="text-sm text-txt-primary whitespace-pre-line">{{ b.content }}</p>
+                                        }
                                         }
                                     </div>
                                 </div>
