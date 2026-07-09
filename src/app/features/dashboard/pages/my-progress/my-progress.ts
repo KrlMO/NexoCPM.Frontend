@@ -56,7 +56,9 @@ export class MyProgress implements OnInit {
 
   private buildChartData() {
     if (!this.mainDashboard?.lastSimulations?.length) return;
-    const sims = this.mainDashboard.lastSimulations.slice(-5);
+    const sims = this.mainDashboard.lastSimulations.slice(-5).sort(
+      (a, b) => new Date(a.finishedAt).getTime() - new Date(b.finishedAt).getTime()
+    );
     this.chartLabels = sims.map((s) => {
       const d = new Date(s.finishedAt);
       return d.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
